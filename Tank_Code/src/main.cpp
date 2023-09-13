@@ -34,14 +34,106 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
 }
 
+//  --- General Fields ---
+double pi = 3.14159265;
+double degToInch = (1/360) * pi * 3.25 * (3/4);
+bool resetDriveEncoders = false;
+
+//  --- PID Fields ---
+bool enableDrivePID = true;
+
+// Settings
+double kP = 0.0;
+double kI = 0.0;
+double kD = 0.0;
+
+double turnkP = 0.0;
+double turnkI = 0.0;
+double turnkD = 0.0;
+
+// Autonomous Settings
+int desiredValue = 5;
+int desiredTurnValue = 90;
+
+int error; // SensorVal - TargetVal : Positional Value
+int prevError = 0; // Position 20 ms ago
+int derivative; // error - prevError : Speed
+int totalError = 0; // Integral : Absement
+int turnError; //
+int turnPrevError = 0;
+int turnDerivative;
+int turnTotalError = 0;
+
+int drivePID() {
+
+  while(enableDrivePID) {
+    if(resetDriveEncoders) {
+      resetDriveEncoders = false;
+
+      FL.setPosition(0, degrees);
+      ML.setPosition(0, degrees);
+      BL.setPosition(0, degrees);
+      FR.setPosition(0, degrees);
+      MR.setPosition(0, degrees);
+      BR.setPosition(0, degrees);
+    }
+    // -------------------------- Lateral Movement PID -------------------------- //
+
+    int leftMotorPositionDeg = ML.position(degrees);
+    int rightMotorPositionDeg = MR.position(degrees);
+    int averagePositionDeg = (leftMotorPositionDeg + rightMotorPositionDeg) / 2;
+    int averagePosition = averagePositionDeg / degToInch;
+
+    error = averagePosition - desiredValue;
+    derivative = error - prevError;
+    totalError += error;
+
+    double latMotorPower = ((error * kP) + (totalError * kI) + (derivative * kD)) / 12.0; 
+
+    // -------------------------- Lateral Movement PID -------------------------- //
+
+    // -------------------------- Turning Movement PID -------------------------- //
+    int turnDifference = leftMotorPositionDeg - rightMotorPositionDeg;
+
+
+    turnError = turnDifference - desiredTurnValue;
+    turnDerivative = turnError - turnPrevError;
+    turnTotalError += turnError;
+
+    double turnMotorPower = ((turnError * turnkP) + (turnTotalError * turnkI) + (turnDerivative * turnkD)) / 12.0; 
+
+    // -------------------------- Turning Movement PID -------------------------- //
+    FL.spin(vex::directionType::fwd, latMotorPower + turnMotorPower, vex::velocityUnits::pct);
+    ML.spin(vex::directionType::fwd, latMotorPower + turnMotorPower, vex::velocityUnits::pct);
+    BL.spin(vex::directionType::fwd, latMotorPower + turnMotorPower, vex::velocityUnits::pct);
+    FR.spin(vex::directionType::fwd, latMotorPower + turnMotorPower, vex::velocityUnits::pct);
+    MR.spin(vex::directionType::fwd, latMotorPower + turnMotorPower, vex::velocityUnits::pct);
+    BR.spin(vex::directionType::fwd, latMotorPower + turnMotorPower, vex::velocityUnits::pct);
+
+    prevError = error;
+    turnPrevError = turnError;
+    vex::task::sleep(20);
+  }
+
+  return 1;
+}
+
 void autonomous(void) {
-  // ..........................................................................
-  // Insert autonomous user code here.
-  // ..........................................................................
+  vex::task runDrivePID(drivePID);
+  resetDriveEncoders = true;
+  desiredValue = 5;
+  desiredTurnValue = 600;
+
+  vex::task::sleep(1000);
+  resetDriveEncoders = true;
+  desiredValue = 5;
+  desiredTurnValue = 300;
+
 }
 
 
 void usercontrol(void) {
+  enableDrivePID = false;
   // Driver Control Main Loop
   while (1) {
     int leftStick = Controller1.Axis3.value();
