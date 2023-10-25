@@ -1,3 +1,15 @@
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         11              
+// FR                   motor         12              
+// ML                   motor         14              
+// MR                   motor         13              
+// BL                   motor         5               
+// BR                   motor         1               
+// Controller1          controller                    
+// ---- END VEXCODE CONFIGURED DEVICES ----
+
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
@@ -7,21 +19,11 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// FL                   motor         1               
-// FR                   motor         2               
-// ML                   motor         3               
-// MR                   motor         4               
-// BL                   motor         5               
-// BR                   motor         6               
-// Controller1          controller                    
-// ---- END VEXCODE CONFIGURED DEVICES ----
-
 #include "vex.h"
+#include "iostream"
 
 using namespace vex;
+using namespace std;
 
 // A global instance of competition
 competition Competition;
@@ -43,9 +45,9 @@ bool resetDriveEncoders = false;
 bool enableDrivePID = true;
 
 // Settings
-double kP = 0.0;
-double kI = 0.0;
-double kD = 0.0;
+double kP = 0.1;
+double kI = 0.001;
+double kD = 0.001;
 
 double turnkP = 0.0;
 double turnkI = 0.0;
@@ -53,13 +55,13 @@ double turnkD = 0.0;
 
 // Autonomous Settings
 int desiredValue = 5;
-int desiredTurnValue = 90;
+int desiredTurnValue = 0;
 
 int error; // SensorVal - TargetVal : Positional Value
 int prevError = 0; // Position 20 ms ago
 int derivative; // error - prevError : Speed
 int totalError = 0; // Integral : Absement
-int turnError; //
+int turnError;
 int turnPrevError = 0;
 int turnDerivative;
 int turnTotalError = 0;
@@ -81,34 +83,33 @@ int drivePID() {
 
     int leftMotorPositionDeg = ML.position(degrees);
     int rightMotorPositionDeg = MR.position(degrees);
-    int averagePositionDeg = (leftMotorPositionDeg + rightMotorPositionDeg) / 2;
-    int averagePosition = averagePositionDeg / degToInch;
+    int averagePosition = (leftMotorPositionDeg + rightMotorPositionDeg) / 2;
+    // int averagePosition = averagePositionDeg / degToInch;
 
-    error = averagePosition - desiredValue;
+    error = desiredValue - averagePosition;
     derivative = error - prevError;
     totalError += error;
 
-    double latMotorPower = ((error * kP) + (totalError * kI) + (derivative * kD)) / 12.0; 
-
+    double latMotorPower = ((error * kP) + (totalError * kI) + (derivative * kD)); 
+    cout << latMotorPower << endl;
     // -------------------------- Lateral Movement PID -------------------------- //
 
     // -------------------------- Turning Movement PID -------------------------- //
-    int turnDifference = leftMotorPositionDeg - rightMotorPositionDeg;
+    // int turnDifference = leftMotorPositionDeg - rightMotorPositionDeg;
 
+    // turnError = turnDifference - desiredTurnValue;
+    // turnDerivative = turnError - turnPrevError;
+    // turnTotalError += turnError;
 
-    turnError = turnDifference - desiredTurnValue;
-    turnDerivative = turnError - turnPrevError;
-    turnTotalError += turnError;
-
-    double turnMotorPower = ((turnError * turnkP) + (turnTotalError * turnkI) + (turnDerivative * turnkD)) / 12.0; 
+    // double turnMotorPower = ((turnError * turnkP) + (turnTotalError * turnkI) + (turnDerivative * turnkD)) / 12.0; 
 
     // -------------------------- Turning Movement PID -------------------------- //
-    FL.spin(vex::directionType::fwd, latMotorPower + turnMotorPower, vex::velocityUnits::pct);
-    ML.spin(vex::directionType::fwd, latMotorPower + turnMotorPower, vex::velocityUnits::pct);
-    BL.spin(vex::directionType::fwd, latMotorPower + turnMotorPower, vex::velocityUnits::pct);
-    FR.spin(vex::directionType::fwd, latMotorPower + turnMotorPower, vex::velocityUnits::pct);
-    MR.spin(vex::directionType::fwd, latMotorPower + turnMotorPower, vex::velocityUnits::pct);
-    BR.spin(vex::directionType::fwd, latMotorPower + turnMotorPower, vex::velocityUnits::pct);
+    FL.spin(vex::directionType::fwd, latMotorPower, vex::velocityUnits::pct);
+    ML.spin(vex::directionType::fwd, latMotorPower, vex::velocityUnits::pct);
+    BL.spin(vex::directionType::fwd, latMotorPower, vex::velocityUnits::pct);
+    FR.spin(vex::directionType::fwd, latMotorPower, vex::velocityUnits::pct);
+    MR.spin(vex::directionType::fwd, latMotorPower, vex::velocityUnits::pct);
+    BR.spin(vex::directionType::fwd, latMotorPower, vex::velocityUnits::pct);
 
     prevError = error;
     turnPrevError = turnError;
@@ -121,13 +122,13 @@ int drivePID() {
 void autonomous(void) {
   vex::task runDrivePID(drivePID);
   resetDriveEncoders = true;
-  desiredValue = 5;
-  desiredTurnValue = 600;
+  desiredValue = 235;
+  // desiredTurnValue = 600;
 
-  vex::task::sleep(1000);
-  resetDriveEncoders = true;
-  desiredValue = 5;
-  desiredTurnValue = 300;
+  // vex::task::sleep(1000);
+  // resetDriveEncoders = true;
+  // desiredValue = 5;
+  // desiredTurnValue = 300;
 
 }
 
@@ -139,7 +140,6 @@ void usercontrol(void) {
     int leftStick = Controller1.Axis3.value();
     int rightStick = Controller1.Axis2.value();
     int stickDeadZone = 5;
-
     // Left wheel control
     if(abs(leftStick) > stickDeadZone) { // Check dead zone
       FL.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
@@ -147,9 +147,9 @@ void usercontrol(void) {
       BL.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
     }
     else {
-      FL.stop(hold);
-      ML.stop(hold);
-      BL.stop(hold);
+      FL.stop(coast);
+      ML.stop(coast);
+      BL.stop(coast);
     }
 
     // Right wheel control
@@ -159,9 +159,9 @@ void usercontrol(void) {
       BR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
     }
     else {
-      FR.stop(hold);
-      MR.stop(hold);
-      BR.stop(hold);
+      FR.stop(coast);
+      MR.stop(coast);
+      BR.stop(coast);
     }
 
     // wait(20, msec); // Sleep the task for a short amount of time to
