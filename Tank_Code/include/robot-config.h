@@ -10,6 +10,8 @@ extern motor MR;
 extern motor BL;
 extern motor BR;
 extern controller Controller1;
+extern motor Cata;
+extern motor Intake;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

@@ -1,6 +1,123 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         1               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         2               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         4               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         4               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         1               
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         4               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         5               
+// BR                   motor         1               
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         4               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         21              
+// BL                   motor         5               
+// BR                   motor         1               
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         4               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         21              
+// BL                   motor         5               
+// BR                   motor         1               
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         4               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         10              
+// ML                   motor         20              
+// MR                   motor         21              
+// BL                   motor         5               
+// BR                   motor         1               
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         4               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
 // FL                   motor         11              
 // FR                   motor         12              
 // ML                   motor         14              
@@ -31,6 +148,14 @@ competition Competition;
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
+  FL.setPosition(0, degrees);
+  ML.setPosition(0, degrees);
+  BL.setPosition(0, degrees);
+  FR.setPosition(0, degrees);
+  MR.setPosition(0, degrees);
+  BR.setPosition(0, degrees);
+  Intake.setPosition(0, degrees);
+  Cata.setPosition(0, degrees);
 
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
@@ -135,11 +260,29 @@ void autonomous(void) {
 
 void usercontrol(void) {
   enableDrivePID = false;
+  bool cataFire = false;
   // Driver Control Main Loop
   while (1) {
     int leftStick = Controller1.Axis3.value();
     int rightStick = Controller1.Axis2.value();
+    bool L1 = Controller1.ButtonL1.pressing();
+    bool L2 = Controller1.ButtonL2.pressing();
+    bool R2 = Controller1.ButtonR2.pressing();
+    bool R1 = Controller1.ButtonR1.pressing();
     int stickDeadZone = 5;
+
+    if(leftStick > 0) {
+      leftStick = (leftStick * leftStick) / 200;
+    } else if(leftStick < 0) {
+      leftStick = (leftStick * leftStick) / -200;
+    }
+
+    if(rightStick > 0) {
+      rightStick = (rightStick * rightStick) / 200;
+    } else if(leftStick < 0) {
+      rightStick = (rightStick * rightStick) / -200;
+    }
+
     // Left wheel control
     if(abs(leftStick) > stickDeadZone) { // Check dead zone
       FL.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
@@ -164,7 +307,29 @@ void usercontrol(void) {
       BR.stop(coast);
     }
 
-    // wait(20, msec); // Sleep the task for a short amount of time to
+    if(!L1 && !R1) {
+      Intake.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+    } else if(L1 && !R1) {
+      Intake.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
+    }
+
+    // if(Cata.position(degrees) < 360 || Cata.position(degrees) > 360) {
+    //   cataFire = false;
+    //   Cata.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
+    // }
+    // else if(R2 || cataFire) {
+    //   cataFire = true;
+    //   Cata.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
+    // }
+
+    if(R1) {
+       Cata.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
+       Intake.spin(vex::directionType::rev, 20, vex::velocityUnits::pct);
+    } else {
+      Cata.stop();
+    }
+
+    wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
 }

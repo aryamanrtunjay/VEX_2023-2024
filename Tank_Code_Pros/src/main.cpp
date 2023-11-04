@@ -1,12 +1,14 @@
 #include "main.h"
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-pros::Motor LF(1);
-pros::Motor RF(2);
-pros::Motor LM(3);
-pros::Motor RM(4);
+pros::Motor LF(2);
+pros::Motor RF(10);
+pros::Motor LM(20);
+pros::Motor RM(19);
 pros::Motor LB(5);
-pros::Motor RB(6);
+pros::Motor RB(1);
+pros::Motor cata(14);
+pros::Motor intake(3);
 
 /**
  * A callback function for LLEMU's center button.
@@ -31,6 +33,8 @@ void initialize() {
 	RM.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	LB.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 	RB.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	cata.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+	intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 }
 
 /**
@@ -75,7 +79,7 @@ void autonomous() {}
  *
  * If the robot is disabled or communications is lost, the
  * operator control task will be stopped. Re-enabling the robot will restart the
- * task, not resume it from where it left off.
+ * task, not resume it from where it left off.`	
  */
 
  
@@ -83,9 +87,20 @@ void opcontrol() {
 	while (true) {
 		int left = master.get_analog(ANALOG_LEFT_Y);
 		int right = master.get_analog(ANALOG_RIGHT_Y);
+		int cataU = master.get_digital(DIGITAL_R1);
+		int cataD = master.get_digital(DIGITAL_R2);
+		int intakeU = master.get_digital(DIGITAL_L1);
+		int intakeD = master.get_digital(DIGITAL_L2);
 
-		LF, LM, LB = left;
-		RF, RM, RB = right;
+		int intakeVolt = 0;
+		if(intakeU >= 0) {
+			intakeVolt = 12000;
+		}
+
+		LF.move(50);
+		RF.move(50);
+
+		intake.move_voltage(intakeVolt);
 
 		pros::delay(10);
 	}
