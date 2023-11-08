@@ -163,23 +163,29 @@ void pre_auton(void) {
 
 //  --- General Fields ---
 double pi = 3.14159265;
-double degToInch = (1/360) * pi * 3.25 * (3/4);
+double degToInch = (1.0/360) * pi * 3.25 * (3.0/4.0);
 bool resetDriveEncoders = false;
 
 //  --- PID Fields ---
 bool enableDrivePID = true;
 
 // Settings
-double kP = 0.1;
-double kI = 0.001;
-double kD = 0.001;
+// double kU = 0.30;
+// double pU = 0.70;
+// double kP = 0.6 * kU;
+// double kI = 0.3 * kU / pU;
+// double kD = 0.075 * kU / pU;
+
+double kP = 0.085;
+double kI = 0.0000001;
+double kD = 3.00;
 
 double turnkP = 0.0;
 double turnkI = 0.0;
 double turnkD = 0.0;
 
 // Autonomous Settings
-int desiredValue = 5;
+double desiredValue = 5;
 int desiredTurnValue = 0;
 
 int error; // SensorVal - TargetVal : Positional Value
@@ -229,16 +235,17 @@ int drivePID() {
     // double turnMotorPower = ((turnError * turnkP) + (turnTotalError * turnkI) + (turnDerivative * turnkD)) / 12.0; 
 
     // -------------------------- Turning Movement PID -------------------------- //
-    FL.spin(vex::directionType::fwd, latMotorPower, vex::velocityUnits::pct);
-    ML.spin(vex::directionType::fwd, latMotorPower, vex::velocityUnits::pct);
-    BL.spin(vex::directionType::fwd, latMotorPower, vex::velocityUnits::pct);
-    FR.spin(vex::directionType::fwd, latMotorPower, vex::velocityUnits::pct);
-    MR.spin(vex::directionType::fwd, latMotorPower, vex::velocityUnits::pct);
-    BR.spin(vex::directionType::fwd, latMotorPower, vex::velocityUnits::pct);
+    double speedLimit = 0.3;
+    FL.spin(vex::directionType::fwd, latMotorPower * speedLimit, vex::velocityUnits::pct);
+    ML.spin(vex::directionType::fwd, latMotorPower * speedLimit, vex::velocityUnits::pct);
+    BL.spin(vex::directionType::fwd, latMotorPower * speedLimit, vex::velocityUnits::pct);
+    FR.spin(vex::directionType::fwd, latMotorPower * speedLimit, vex::velocityUnits::pct);
+    MR.spin(vex::directionType::fwd, latMotorPower * speedLimit, vex::velocityUnits::pct);
+    BR.spin(vex::directionType::fwd, latMotorPower * speedLimit, vex::velocityUnits::pct);
 
     prevError = error;
     turnPrevError = turnError;
-    vex::task::sleep(20);
+    vex::task::sleep(1);
   }
 
   return 1;
@@ -247,7 +254,7 @@ int drivePID() {
 void autonomous(void) {
   vex::task runDrivePID(drivePID);
   resetDriveEncoders = true;
-  desiredValue = 235;
+  desiredValue = 60 / degToInch;
   // desiredTurnValue = 600;
 
   // vex::task::sleep(1000);
