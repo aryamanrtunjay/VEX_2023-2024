@@ -12,6 +12,10 @@ extern motor BR;
 extern controller Controller1;
 extern motor Cata;
 extern motor Intake;
+extern digital_out rightWing;
+extern digital_out leftWing;
+extern inertial Inertial;
+extern bumper Bumper;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

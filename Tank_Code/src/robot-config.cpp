@@ -16,7 +16,11 @@ motor BL = motor(PORT16, ratio6_1, true);
 motor BR = motor(PORT19, ratio6_1, false);
 controller Controller1 = controller(primary);
 motor Cata = motor(PORT14, ratio36_1, false);
-motor Intake = motor(PORT1, ratio6_1, false);
+motor Intake = motor(PORT13, ratio6_1, false);
+digital_out rightWing = digital_out(Brain.ThreeWirePort.A);
+digital_out leftWing = digital_out(Brain.ThreeWirePort.B);
+inertial Inertial = inertial(PORT11);
+bumper Bumper = bumper(Brain.ThreeWirePort.H);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
