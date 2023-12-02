@@ -1,6 +1,360 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         18              
+// ML                   motor         9               
+// MR                   motor         17              
+// BL                   motor         15              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         20              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      12              
+// PTO                  digital_out   C               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         18              
+// ML                   motor         9               
+// MR                   motor         17              
+// BL                   motor         15              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         20              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      3               
+// PTO                  digital_out   C               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         18              
+// ML                   motor         9               
+// MR                   motor         19              
+// BL                   motor         15              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         20              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      3               
+// PTO                  digital_out   C               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         18              
+// ML                   motor         9               
+// MR                   motor         19              
+// BL                   motor         15              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         20              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// PTO                  digital_out   C               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         18              
+// ML                   motor         9               
+// MR                   motor         19              
+// BL                   motor         15              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// PTO                  digital_out   C               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         18              
+// ML                   motor         9               
+// MR                   motor         19              
+// BL                   motor         15              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         14              
+// Flytake              motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// PTO                  digital_out   C               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         18              
+// ML                   motor         20              
+// MR                   motor         19              
+// BL                   motor         15              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         14              
+// Flytake              motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// PTO                  digital_out   C               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         18              
+// ML                   motor         20              
+// MR                   motor         19              
+// BL                   motor         16              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         14              
+// Flytake              motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// PTO                  digital_out   C               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         19              
+// BL                   motor         16              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         14              
+// Flytake              motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// PTO                  digital_out   C               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         14              
+// Flytake              motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// PTO                  digital_out   C               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Arm                  motor         14              
+// Flytake              motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// PTO                  digital_out   C               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Arm                  motor         14              
+// Flytake              motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// PTO                  digital_out   C               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Arm                  motor         14              
+// Flytake              motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Cata                 motor         14              
+// Flytake              motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// Bumper               bumper        H               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// Bumper               bumper        H               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// Bumper               bumper        H               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// Bumper               bumper        H               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+/// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// Bumper               bumper        H               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         18              
+// FR                   motor         6               
+// ML                   motor         20              
+// MR                   motor         10              
+// BL                   motor         16              
+// BR                   motor         19              
+// Controller1          controller                    
+// Cata                 motor         14              
+// Intake               motor         13              
+// rightWing            digital_out   A               
+// leftWing             digital_out   B               
+// Inertial             inertial      11              
+// Bumper               bumper        C               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
 // FL                   motor         11              
 // FR                   motor         12              
 // ML                   motor         14              
@@ -38,8 +392,8 @@ void pre_auton(void) {
   FR.setPosition(0, degrees);
   MR.setPosition(0, degrees);
   BR.setPosition(0, degrees);
-  Intake.setPosition(0, degrees);
-  Cata.setPosition(0, degrees);
+  Flytake.setPosition(0, degrees);
+  Arm.setPosition(0, degrees);
 
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
@@ -178,8 +532,8 @@ void autonomous(void) {
   rightWing.set(false);
   drive(24, 1000);
 
-  // Second Straight Attack Type Shi
-  for (int i = 0; i < 2; i += 1) {
+  // Second Straight 
+  for (int i = 0; i < 2; i++) {
     drive(24, 1000);
     turn(0, 1000);
     drive(24, 1000);
@@ -198,6 +552,42 @@ void autonomous(void) {
 
 
 
+  // Matxch Load Left
+  drive(60, 0);
+  turn(91, 2000);
+
+  drive(3, 1300);
+  Flytake.spinFor(vex::directionType::rev, 1440, degrees, 200, vex::velocityUnits::pct);
+  vex::task::sleep(500);
+
+  drive(-12, 500);
+  turn(80, 500);
+  drive(25, 1000);
+  drive(-12, 1000);
+  turn(90, 300);
+  drive(-10, 300);
+  turn(-72.5, 400);
+  turn(-145, 400);
+  drive(65, 1300);
+  turn(-142, 1800);
+  drive(-12, 1000);
+  // 
+
+  // Match Load Right
+  // drive(60, 0);
+  // turn(-89, 2000);
+  // drive(3, 1300);
+  // Intake.spinFor(vex::directionType::rev, 1440, degrees, 200, vex::velocityUnits::pct);
+  // vex::task::sleep(500);
+  // drive(-12, 500);
+  // turn(-80, 500);
+  // drive(25, 1000);
+  // drive(-12, 1000);
+  // turn(-89, 300);
+  // drive(-10, 300);
+  // turn(20, 400);
+  // drive(65, 1300);
+  // turn(35, 1800);
 }
 
 
@@ -208,6 +598,9 @@ void usercontrol(void) {
   bool allowA = true;
   bool allowLeft = true;
   bool isBall = false;
+  bool armUp = false;
+  bool moveArmUp = false;
+  bool moveArmDown = true;
 
   double above1 = 0;
   // Driver Control Main Loop
@@ -258,43 +651,39 @@ void usercontrol(void) {
       BR.stop(coast);
     }
 
-    cout << Intake.current() << endl;
-    if(!isBall && !L1) {
-      Intake.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+    if(L1 && !armUp) {
+      moveArmUp = true;
     }
-    else if(L1) {
-      Intake.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
-      isBall = false;
-      matchTime = 0;
-    }
-    else {
-      Intake.stop(coast);
-    }
-
-    if(matchTime > 1000) {
-      if(Intake.current() >= 1) {
-        above1++;
+    if(L2) {
+      if(armUp) {
+        moveArmDown = true;
+      }
+      else { 
+        Flytake.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
       }
     }
-    if(above1 > 3) {
-      isBall = true;
-      above1 = 0;
+
+    if(moveArmUp && Inertial.pitch() < 60) {
+      cout << Inertial.pitch() << endl;
+      Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+      PTO.set(true);
+      Flytake.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
     }
-
-    // if(Cata.position(degrees) < 360 || Cata.position(degrees) > 360) {
-    //   cataFire = false;
-    //   Cata.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
-    // }
-    // else if(R2 || cataFire) {
-    //   cataFire = true;
-    //   Cata.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
-    // }
-
-    if(R1) {
-      Cata.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
-      Intake.spin(vex::directionType::rev, 0, vex::velocityUnits::pct);
-    } else {
-      Cata.stop();
+    else if(moveArmUp) {
+      cout << "Stopping" << endl;
+      moveArmUp = false;
+      Arm.stop(coast);
+      armUp = true;
+    }
+    if(moveArmDown && Inertial.pitch() > 28) {
+      PTO.set(false);
+      Arm.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
+      Flytake.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+    }
+    else if(moveArmDown) {
+      moveArmDown = false;
+      Arm.stop(coast);
+      armUp = false;
     }
 
     if(R2 && allowA) {
