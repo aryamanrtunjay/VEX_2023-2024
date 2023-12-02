@@ -1,37 +1,3 @@
-/// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// FL                   motor         18              
-// FR                   motor         6               
-// ML                   motor         20              
-// MR                   motor         10              
-// BL                   motor         16              
-// BR                   motor         19              
-// Controller1          controller                    
-// Cata                 motor         14              
-// Intake               motor         13              
-// rightWing            digital_out   A               
-// leftWing             digital_out   B               
-// Inertial             inertial      11              
-// Bumper               bumper        H               
-// ---- END VEXCODE CONFIGURED DEVICES ----
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// FL                   motor         18              
-// FR                   motor         6               
-// ML                   motor         20              
-// MR                   motor         10              
-// BL                   motor         16              
-// BR                   motor         19              
-// Controller1          controller                    
-// Cata                 motor         14              
-// Intake               motor         13              
-// rightWing            digital_out   A               
-// leftWing             digital_out   B               
-// Inertial             inertial      11              
-// Bumper               bumper        C               
-// ---- END VEXCODE CONFIGURED DEVICES ----
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
@@ -95,11 +61,11 @@ bool enableDrivePID = true;
 // double kI = 0.3 * kU / pU;
 // double kD = 0.075 * kU / pU;
 
-double kP = 0.15;
+double kP = 0.05;
 double kI = 0.0;
-double kD = 15.0;
+double kD = 0;
 
-double turnkP = 25;
+double turnkP = 6;
 double turnkI = 0.00001;
 double turnkD = 0.4;
 
@@ -131,13 +97,12 @@ int drivePID() {
     }
     // -------------------------- Lateral Movement PID -------------------------- //
 
-    int leftMotorPositionDeg = ML.position(degrees);
-    int rightMotorPositionDeg = MR.position(degrees);
-    int averagePosition = (leftMotorPositionDeg + rightMotorPositionDeg) / 2;
+    int leftMotorPositionDeg = (ML.position(degrees) + BL.position(degrees) + FL.position(degrees));
+    int rightMotorPositionDeg = (MR.position(degrees) + BR.position(degrees) + FR.position(degrees));
+    int averagePosition = (leftMotorPositionDeg + rightMotorPositionDeg) / 6;
     // int averagePosition = averagePositionDeg / degToInch;
 
     error = desiredValue - averagePosition;
-    cout << error * degToInch << endl;
     derivative = error - prevError;
     totalError += error;
 
@@ -155,17 +120,15 @@ int drivePID() {
 
     double turnMotorPower = ((turnError * turnkP) + (turnTotalError * turnkI) + (turnDerivative * turnkD)) / 12.0; 
     if(desiredTurnValue >= 360) turnMotorPower = 0;
-    turnMotorPower = 0;
     // -------------------------- Turning Movement PID -------------------------- //
     double speedLimit = 0.5;
-    latMotorPower = 200;
-    FL.spin(vex::directionType::fwd, (latMotorPower - turnMotorPower) * speedLimit, vex::velocityUnits::pct);
-    ML.spin(vex::directionType::fwd, (latMotorPower - turnMotorPower) * speedLimit, vex::velocityUnits::pct);
-    BL.spin(vex::directionType::fwd, (latMotorPower - turnMotorPower) * speedLimit, vex::velocityUnits::pct);
-    MR.spin(vex::directionType::fwd, (latMotorPower + turnMotorPower) * speedLimit, vex::velocityUnits::pct);
-    BR.spin(vex::directionType::fwd, (latMotorPower + turnMotorPower) * speedLimit, vex::velocityUnits::pct);
-    FR.spin(vex::directionType::fwd, (latMotorPower + turnMotorPower) * speedLimit, vex::velocityUnits::pct);
-
+    FL.spin(vex::directionType::fwd, (latMotorPower - turnMotorPower), vex::velocityUnits::pct);
+    ML.spin(vex::directionType::fwd, (latMotorPower - turnMotorPower), vex::velocityUnits::pct);
+    BL.spin(vex::directionType::fwd, (latMotorPower - turnMotorPower), vex::velocityUnits::pct);
+    MR.spin(vex::directionType::fwd, (latMotorPower + turnMotorPower), vex::velocityUnits::pct);
+    BR.spin(vex::directionType::fwd, (latMotorPower + turnMotorPower), vex::velocityUnits::pct);
+    FR.spin(vex::directionType::fwd, (latMotorPower + turnMotorPower), vex::velocityUnits::pct);
+    cout << averagePosition * degToInch << endl;
     prevError = error;
     turnPrevError = turnError;
     vex::task::sleep(2);
@@ -177,7 +140,6 @@ int drivePID() {
 void drive(double inches, double delay) {
   vex::task::sleep(delay);
   resetDriveEncoders = true;
-  desiredTurnValue = 666;
   desiredValue = inches / degToInch;
 }
 
@@ -190,19 +152,52 @@ void turn(double deg, double delay) {
 
 void autonomous(void) {
   vex::task runDrivePID(drivePID);
-  drive(60, 0);
-  // turn(91, 3000);
 
-  // drive(3, 1800);
-  // Intake.spinFor(vex::directionType::rev, 1440, degrees, 200, vex::velocityUnits::pct);
+  // 10 Type Shi
+  drive(34, 0);
+  turn(0, 1000);
+  drive(12, 1000);
+  drive(-8, 1000);
+  turn(80, 1000);
+  vex::task::sleep(20000); // Raise and Run Flywheel
+  
+  // First Side Attack Type Shi
+  turn(135, 1000);
+  drive(34, 1000);
+  turn(90, 1000);
+  drive(72, 1000);
+  leftWing.set(true);
+  rightWing.set(true);
+  turn(55, 1000);
+  drive(12, 1000);
+  turn(15, 1000);
+  drive(36, 1000);
+  drive(-6, 1000);
+  turn(270, 1000);
+  leftWing.set(false);
+  rightWing.set(false);
+  drive(24, 1000);
 
-  // drive(12, 500);
-  // drive(-6, 500);
-  // turn(0, 1000);
-  // drive(-65, 1800);
-  // turn(-90, 3000);
-  // drive(18, 1000);
-  // turn(-45, 1000);
+  // Second Straight Attack Type Shi
+  for (int i = 0; i < 2; i += 1) {
+    drive(24, 1000);
+    turn(0, 1000);
+    drive(24, 1000);
+    leftWing.set(true);
+    rightWing.set(true);
+    turn(90, 1000);
+    drive(36, 1000);
+    drive(6, 1000);
+    leftWing.set(false);
+    rightWing.set(false);
+    turn(270, 1000);
+  }
+
+  drive(24, 1000);
+  turn(0, 1000);
+
+
+
 }
 
 
@@ -329,7 +324,7 @@ void usercontrol(void) {
 //
 int main() {
   // Set up callbacks for autonomous and driver control periods.
-  Competition.autonomous(autonomous);
+  // Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
 
   // Run the pre-autonomous function.
