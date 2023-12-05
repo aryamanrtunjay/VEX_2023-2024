@@ -2,6 +2,22 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // FL                   motor         1               
+// FR                   motor         19              
+// ML                   motor         9               
+// MR                   motor         17              
+// BL                   motor         15              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         18              
+// Wing                 digital_out   A               
+// Inertial             inertial      12              
+// PTO                  digital_out   B               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
 // FR                   motor         16              
 // ML                   motor         9               
 // MR                   motor         17              
@@ -597,10 +613,10 @@ void autonomous(void) {
   while(Inertial.pitch() < 75) {
     Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
   }
-  turn(65, 1000);
+  turn(60, 1000);
   drive(0, 800);
   PTO.set(true);
-  Flytake.spinFor(vex::directionType::fwd, 25, vex::timeUnits::sec, 90, vex::velocityUnits::pct);
+  Flytake.spinFor(vex::directionType::fwd, 30, vex::timeUnits::sec, 60, vex::velocityUnits::pct);
 
   while(Inertial.pitch() > 8) {
     Arm.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
@@ -767,7 +783,7 @@ void usercontrol(void) {
     if(moveArmUp && Inertial.pitch() < 70) {
       Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
       PTO.set(true);
-      Flytake.spin(vex::directionType::fwd, 80, vex::velocityUnits::pct);
+      Flytake.spin(vex::directionType::fwd, 60, vex::velocityUnits::pct);
     }
     else if(moveArmUp) {
       moveArmUp = false;

@@ -2,6 +2,22 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // FL                   motor         1               
+// FR                   motor         19              
+// ML                   motor         9               
+// MR                   motor         17              
+// BL                   motor         15              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         18              
+// Wing                 digital_out   A               
+// Inertial             inertial      12              
+// PTO                  digital_out   B               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
 // FR                   motor         16              
 // ML                   motor         9               
 // MR                   motor         17              
@@ -585,25 +601,30 @@ void turn(double deg, double delay) {
 
 void autonomous(void) {
   vex::task runDrivePID(drivePID);
-  while(Inertial.heading() < 28) {
-    Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
-  }
-  Flytake.spinFor(vex::directionType::fwd, 1440, degrees, 100, vex::velocityUnits::pct);
-  Arm.stop(coast);
-  drive(60, 0);
-  turn(90, 2000);
+  // while(Inertial.heading() < 28) {
+  //   Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+  // }
+  // Flytake.spinFor(vex::directionType::fwd, 1440, degrees, 100, vex::velocityUnits::pct);
+  // Arm.stop(coast);
+  // drive(60, 0);
+  // turn(90, 2000);
 
-  drive(3, 1000);
-  Flytake.spinFor(vex::directionType::rev, 1440, degrees, 200, vex::velocityUnits::pct);
+  // drive(3, 1000);
+  // Flytake.spinFor(vex::directionType::rev, 1440, degrees, 200, vex::velocityUnits::pct);
 
-  drive(12, 500);
-  drive(-6, 500);
-  turn(45, 1000);
-  drive(-65, 1800);
-  Wing.set(true);
-  turn(90, 3000);
-  drive(18, 1000);
-  turn(-45, 1000);
+  // drive(12, 500);
+  // drive(-6, 500);
+  // turn(45, 1000);
+  // drive(-65, 1800);
+  // Wing.set(true);
+  // turn(90, 3000);
+  // drive(18, 1000);
+  // turn(-45, 1000);
+  turn(25, 0);
+  drive(-42, 1000);
+  drive(15, 1000);
+  drive(-20, 1000);
+  drive(30,1000);
 }
 
 void usercontrol(void) {
@@ -695,7 +716,7 @@ void usercontrol(void) {
     if(moveArmUp && Inertial.pitch() < 70) {
       Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
       PTO.set(true);
-      Flytake.spin(vex::directionType::fwd, 80, vex::velocityUnits::pct);
+      Flytake.spin(vex::directionType::fwd, 50, vex::velocityUnits::pct);
     }
     else if(moveArmUp) {
       moveArmUp = false;
