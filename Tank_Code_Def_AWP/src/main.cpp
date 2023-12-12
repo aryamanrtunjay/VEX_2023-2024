@@ -503,6 +503,7 @@ double matchTime = 0;
 
 //  --- PID Fields ---
 bool enableDrivePID = true;
+bool enableFlywheelPID = true;
 
 // Settings
 // double kU = 0.30;
@@ -522,6 +523,7 @@ double turnkD = 0.4;
 // Autonomous Settings
 double desiredValue = 0;
 int desiredTurnValue = 0;
+double desiredRPM = 0;
 
 int error; // SensorVal - TargetVal : Positional Value
 int prevError = 0; // Position 20 ms ago
@@ -586,6 +588,27 @@ int drivePID() {
   return 1;
 }
 
+int flywheelPID() {
+  double error = 0;
+  double prevError = 0;
+  double totalError = 0;
+  while(enableFlywheelPID) {
+    int vel = Flytake.velocity(vex::velocityUnits::rpm);
+    error = desiredRPM - vel;
+    derivative = error - prevError;
+    totalError += error;
+
+    double motorPower = ((error * kP) + (totalError * kI) + (derivative * kD));
+    if(desiredRPM >= 0) {
+      Flytake.spin(vex::directionType::fwd, motorPower, vex::velocityUnits::pct);
+    }
+    else {
+      Flytake.spin(vex::directionType::rev, motorPower, vex::velocityUnits::pct);
+    }
+  }
+  return 1;
+}
+
 void drive(double inches, double delay) {
   vex::task::sleep(delay);
   resetDriveEncoders = true;
@@ -621,7 +644,12 @@ void autonomous(void) {
 }
 
 void usercontrol(void) {
+  vex::task runFlywheelPID(flywheelPID);
+  vex::task runDrivePID(drivePID);
+
   enableDrivePID = false;
+  enableFlywheelPID = true;
+  desiredRPM = 0;
   bool openRWing = false;
   bool openLWing = false;
   bool allowA = true;
@@ -642,6 +670,9 @@ void usercontrol(void) {
     bool R1 = Controller1.ButtonR1.pressing();
     bool A = Controller1.ButtonA.pressing();
     bool left = Controller1.ButtonLeft.pressing();
+    bool right = Controller1.ButtonRight.pressing();
+    bool up = Controller1.ButtonUp.pressing();
+    bool down = Controller1.ButtonDown.pressing();
     int stickDeadZone = 5;
     bool outtake = false;
 
@@ -657,28 +688,46 @@ void usercontrol(void) {
       rightStick = (rightStick * rightStick) / -200;
     }
 
-    // Left wheel control
-    if(abs(leftStick) > stickDeadZone) { // Check dead zone
-      FL.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
-      ML.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
-      BL.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
+    if(up) {
+      enableDrivePID = true;
+      desiredValue = 90;
+    }
+    else if(right) {
+      enableDrivePID = true;
+      desiredValue = 180;
+    }
+    else if(down) {
+      enableDrivePID = true;
+      desiredValue = -90;
+    }
+    else if(left) {
+      enableDrivePID = true;
+      desiredValue = 0;
     }
     else {
-      FL.stop(coast);
-      ML.stop(coast);
-      BL.stop(coast);
-    }
+      // Left wheel control
+      if(abs(leftStick) > stickDeadZone) { // Check dead zone
+        FL.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
+        ML.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
+        BL.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
+      }
+      else {
+        FL.stop(coast);
+        ML.stop(coast);
+        BL.stop(coast);
+      }
 
-    // Right wheel control
-    if(abs(rightStick) > stickDeadZone) {
-      FR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
-      MR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
-      BR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
-    }
-    else {
-      FR.stop(coast);
-      MR.stop(coast);
-      BR.stop(coast);
+      // Right wheel control
+      if(abs(rightStick) > stickDeadZone) {
+        FR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
+        MR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
+        BR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
+      }
+      else {
+        FR.stop(coast);
+        MR.stop(coast);
+        BR.stop(coast);
+      }
     }
 
     if(L1 && !armUp) {
@@ -689,7 +738,7 @@ void usercontrol(void) {
         moveArmDown = true;
       }
       else { 
-        Flytake.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
+        desiredRPM = -600;
       }
     }
     
@@ -703,23 +752,23 @@ void usercontrol(void) {
     }
 
     if(!L2 && !armUp) {
-      Flytake.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+      desiredRPM = 600;
     }
 
     if(moveArmUp && Inertial.pitch() < 70) {
       Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
       PTO.set(true);
-      Flytake.spin(vex::directionType::fwd,60, vex::velocityUnits::pct);
+      desiredRPM = 300;
     }
     else if(moveArmUp) {
       moveArmUp = false;
       Arm.stop(coast);
       armUp = true;
     }
-    if(moveArmDown && Inertial.pitch() > 28) {
+    if(moveArmDown && Inertial.pitch() > 33) {
       PTO.set(false);
       Arm.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
-      Flytake.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+      desiredRPM = 600;
     }
     else if(moveArmDown) {
       moveArmDown = false;

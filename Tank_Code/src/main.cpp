@@ -499,10 +499,12 @@ void pre_auton(void) {
 double pi = 3.14159265;
 double degToInch = (1.0/360) * pi * 3.25 * (3.0/4.0);
 bool resetDriveEncoders = false;
+bool runPID = false;
 double matchTime = 0;
 
 //  --- PID Fields ---
 bool enableDrivePID = true;
+bool enableFlywheelPID = true;
 
 // Settings
 // double kU = 0.30;
@@ -519,9 +521,14 @@ double turnkP = 6;
 double turnkI = 0.00001;
 double turnkD = 0.4;
 
+double flykP = 0.01;
+double flykI = 0.000009;
+double flykD = 0.001;
+
 // Autonomous Settings
 double desiredValue = 0;
 int desiredTurnValue = 0;
+double desiredRPM = 0;
 
 int error; // SensorVal - TargetVal : Positional Value
 int prevError = 0; // Position 20 ms ago
@@ -533,7 +540,6 @@ int turnDerivative;
 int turnTotalError = 0;
 
 int drivePID() {
-
   while(enableDrivePID) {
     if(resetDriveEncoders) {
       resetDriveEncoders = false;
@@ -587,6 +593,32 @@ int drivePID() {
   return 1;
 }
 
+int flywheelPID() {
+  double error = 0;
+  double prevError = 0;
+  double totalError = 0;
+  double motorPower = 0;
+  while(enableFlywheelPID) {
+    double vel = Flytake.velocity(vex::velocityUnits::rpm);
+    error = desiredRPM - vel;
+    derivative = error - prevError;
+    totalError += error;
+
+    motorPower += ((error * flykP) + (totalError * flykI) + (derivative * flykD));
+    cout << vel << endl;
+    if(motorPower >= 0) {
+      Flytake.spin(vex::directionType::fwd, motorPower, vex::velocityUnits::pct);
+    }
+    else {
+      Flytake.spin(vex::directionType::rev, motorPower, vex::velocityUnits::pct);
+    }
+    wait(20, msec);
+    prevError = error;
+  }
+  
+  return 1;
+}
+
 void drive(double inches, double delay) {
   vex::task::sleep(delay);
   resetDriveEncoders = true;
@@ -601,101 +633,113 @@ void turn(double deg, double delay) {
 }
 
 void autonomous(void) {
-  vex::task runDrivePID(drivePID);
-
-  // // 10 Type Shi
-  drive(2, 0);
-  turn(-45, 500);
-  drive(34, 750);
-  turn(0, 1000);
-  drive(18, 1000);
-  drive(-11, 1000);
-  while(Inertial.pitch() < 75) {
-    Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
-  }
-  turn(60, 1000);
-  drive(0, 800);
+  // vex::task runDrivePID(drivePID);
+  vex::task runFlywheelPID(flywheelPID);
+  cout << "Running PID" << endl;
   PTO.set(true);
-  Flytake.spinFor(vex::directionType::fwd, 30, vex::timeUnits::sec, 60, vex::velocityUnits::pct);
-
-  while(Inertial.pitch() > 8) {
-    Arm.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
-  }
-  
-  // // First Side Attack Type Shi
-  turn(135, 1000);
-  drive(22, 1000);
-  turn(90, 1000);
-  drive(95, 1000);
-  turn(35, 2000);
-  drive(12, 1000);
-  Wing.set(true);
-  turn(0, 1000);
-
-  drive(36, 1000);
-  drive(-3, 1000);
-  turn(-90, 1000);
-  Wing.set(false);
-
-  // Second Straight 
-  for (int i = 0; i < 2; i++) {
-    drive(30, 1000);
-    turn(0, 1000);
-    drive(30, 1000);
-    Wing.set(true);
-    turn(90, 1000);
-    drive(30, 1000);
-    drive(6, 1000);
-    Wing.set(false);
-    turn(-90, 1000);
-  }
-
-  // drive(24, 1000);
-  // turn(0, 1000);
-
-
-
-  // // Matxch Load Left
-  // drive(60, 0);
-  // turn(91, 2000);
-
-  // drive(3, 1300);
-  // Flytake.spinFor(vex::directionType::rev, 1440, degrees, 200, vex::velocityUnits::pct);
-  // vex::task::sleep(500);
-
-  // drive(-12, 500);
-  // turn(80, 500);
-  // drive(25, 1000);
-  // drive(-12, 1000);
-  // turn(90, 300);
-  // drive(-10, 300);
-  // turn(-72.5, 400);
-  // turn(-145, 400);
-  // drive(65, 1300);
-  // turn(-142, 1800);
-  // drive(-12, 1000);
-  // 
-
-  // Match Load Right
-  // drive(60, 0);
-  // turn(-89, 2000);
-  // drive(3, 1300);
-  // Intake.spinFor(vex::directionType::rev, 1440, degrees, 200, vex::velocityUnits::pct);
-  // vex::task::sleep(500);
-  // drive(-12, 500);
-  // turn(-80, 500);
-  // drive(25, 1000);
-  // drive(-12, 1000);
-  // turn(-89, 300);
-  // drive(-10, 300);
-  // turn(20, 400);
-  // drive(65, 1300);
-  // turn(35, 1800);
+  desiredRPM = 300;
+  desiredValue = 0;
 }
+
+// void autonomous(void) {
+//   vex::task runDrivePID(drivePID);
+
+//   // // 10 Type Shi
+//   drive(2, 0);
+//   turn(-45, 500);
+//   drive(34, 750);
+//   turn(0, 1000);
+//   drive(18, 1000);
+//   drive(-11, 1000);
+//   while(Inertial.pitch() < 68) {
+//     Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+//   }
+//   turn(68, 1000);
+//   drive(0, 800);
+//   PTO.set(true);
+//   Flytake.spinFor(vex::directionType::fwd, 60, vex::timeUnits::sec, 100, vex::velocityUnits::pct);
+//   while(Inertial.pitch() > 8) {
+//     Arm.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
+//   }
+//   // // First Side Attack Type Shi
+//   turn(135, 1000);
+//   drive(22, 1000);
+//   turn(90, 1000);
+//   drive(95, 1000);
+//   turn(35, 2000);
+//   drive(12, 1000);
+//   Wing.set(true);
+//   turn(0, 1000);
+
+//   drive(36, 1000);
+//   drive(-3, 1000);
+//   turn(-90, 1000);
+//   Wing.set(false);
+
+//   // Second Straight 
+//   for (int i = 0; i < 2; i++) {
+//     drive(30, 1000);
+//     turn(0, 1000);
+//     drive(30, 1000);
+//     Wing.set(true);
+//     turn(90, 1000);
+//     drive(30, 1000);
+//     drive(6, 1000);
+//     Wing.set(false);
+//     turn(-90, 1000);
+//   }
+
+//   // drive(24, 1000);
+//   // turn(0, 1000);
+
+
+
+//   // // Matxch Load Left
+//   // drive(60, 0);
+//   // turn(91, 2000);
+
+//   // drive(3, 1300);
+//   // Flytake.spinFor(vex::directionType::rev, 1440, degrees, 200, vex::velocityUnits::pct);
+//   // vex::task::sleep(500);
+
+//   // drive(-12, 500);
+//   // turn(80, 500);
+//   // drive(25, 1000);
+//   // drive(-12, 1000);
+//   // turn(90, 300);
+//   // drive(-10, 300);
+//   // turn(-72.5, 400);
+//   // turn(-145, 400);
+//   // drive(65, 1300);
+//   // turn(-142, 1800);
+//   // drive(-12, 1000);
+//   // 
+
+//   // Match Load Right
+//   // drive(60, 0);
+//   // turn(-89, 2000);
+//   // drive(3, 1300);
+//   // Intake.spinFor(vex::directionType::rev, 1440, degrees, 200, vex::velocityUnits::pct);
+//   // vex::task::sleep(500);
+//   // drive(-12, 500);
+//   // turn(-80, 500);
+//   // drive(25, 1000);
+//   // drive(-12, 1000);
+//   // turn(-89, 300);
+//   // drive(-10, 300);
+//   // turn(20, 400);
+//   // drive(65, 1300);
+//   // turn(35, 1800);
+// }
 
 
 void usercontrol(void) {
+  vex::task runFlywheelPID(flywheelPID);
+  vex::task runDrivePID(drivePID);
+
   enableDrivePID = false;
+  enableFlywheelPID = true;
+  desiredRPM = 0;
   bool openRWing = false;
   bool openLWing = false;
   bool allowA = true;
@@ -708,6 +752,7 @@ void usercontrol(void) {
   double above1 = 0;
   // Driver Control Main Loop
   while (1) {
+    // cout << Flytake.velocity(rpm) << endl;
     int leftStick = Controller1.Axis3.value();
     int rightStick = Controller1.Axis2.value();
     bool L1 = Controller1.ButtonL1.pressing();
@@ -716,6 +761,9 @@ void usercontrol(void) {
     bool R1 = Controller1.ButtonR1.pressing();
     bool A = Controller1.ButtonA.pressing();
     bool left = Controller1.ButtonLeft.pressing();
+    bool right = Controller1.ButtonRight.pressing();
+    bool up = Controller1.ButtonUp.pressing();
+    bool down = Controller1.ButtonDown.pressing();
     int stickDeadZone = 5;
     bool outtake = false;
 
@@ -731,28 +779,46 @@ void usercontrol(void) {
       rightStick = (rightStick * rightStick) / -200;
     }
 
-    // Left wheel control
-    if(abs(leftStick) > stickDeadZone) { // Check dead zone
-      FL.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
-      ML.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
-      BL.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
+    if(up) {
+      enableDrivePID = true;
+      desiredValue = 90;
+    }
+    else if(right) {
+      enableDrivePID = true;
+      desiredValue = 180;
+    }
+    else if(down) {
+      enableDrivePID = true;
+      desiredValue = -90;
+    }
+    else if(left) {
+      enableDrivePID = true;
+      desiredValue = 0;
     }
     else {
-      FL.stop(coast);
-      ML.stop(coast);
-      BL.stop(coast);
-    }
+      // Left wheel control
+      if(abs(leftStick) > stickDeadZone) { // Check dead zone
+        FL.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
+        ML.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
+        BL.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
+      }
+      else {
+        FL.stop(coast);
+        ML.stop(coast);
+        BL.stop(coast);
+      }
 
-    // Right wheel control
-    if(abs(rightStick) > stickDeadZone) {
-      FR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
-      MR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
-      BR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
-    }
-    else {
-      FR.stop(coast);
-      MR.stop(coast);
-      BR.stop(coast);
+      // Right wheel control
+      if(abs(rightStick) > stickDeadZone) {
+        FR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
+        MR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
+        BR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
+      }
+      else {
+        FR.stop(coast);
+        MR.stop(coast);
+        BR.stop(coast);
+      }
     }
 
     if(L1 && !armUp) {
@@ -777,23 +843,24 @@ void usercontrol(void) {
     }
 
     if(!L2 && !armUp) {
-      Flytake.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+      // Flytake.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
     }
 
     if(moveArmUp && Inertial.pitch() < 70) {
       Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
       PTO.set(true);
-      Flytake.spin(vex::directionType::fwd, 60, vex::velocityUnits::pct);
+      // Flytake.spin(vex::directionType::fwd, 50, vex::velocityUnits::pct);
+      desiredRPM = 300;
     }
     else if(moveArmUp) {
       moveArmUp = false;
       Arm.stop(coast);
       armUp = true;
     }
-    if(moveArmDown && Inertial.pitch() > 28) {
+    if(moveArmDown && Inertial.pitch() > 33) {
       PTO.set(false);
       Arm.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
-      Flytake.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+      // Flytake.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
     }
     else if(moveArmDown) {
       moveArmDown = false;
