@@ -632,105 +632,105 @@ void turn(double deg, double delay) {
   desiredTurnValue = deg;
 }
 
-void autonomous(void) {
-  // vex::task runDrivePID(drivePID);
-  vex::task runFlywheelPID(flywheelPID);
-  cout << "Running PID" << endl;
-  PTO.set(true);
-  desiredRPM = 300;
-  desiredValue = 0;
-}
-
 // void autonomous(void) {
-//   vex::task runDrivePID(drivePID);
-
-//   // // 10 Type Shi
-//   drive(2, 0);
-//   turn(-45, 500);
-//   drive(34, 750);
-//   turn(0, 1000);
-//   drive(18, 1000);
-//   drive(-11, 1000);
-//   while(Inertial.pitch() < 68) {
-//     Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
-//   }
-//   turn(68, 1000);
-//   drive(0, 800);
+//   // vex::task runDrivePID(drivePID);
+//   vex::task runFlywheelPID(flywheelPID);
+//   cout << "Running PID" << endl;
 //   PTO.set(true);
-//   Flytake.spinFor(vex::directionType::fwd, 60, vex::timeUnits::sec, 100, vex::velocityUnits::pct);
-//   while(Inertial.pitch() > 8) {
-//     Arm.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
-//   }
-//   // // First Side Attack Type Shi
-//   turn(135, 1000);
-//   drive(22, 1000);
-//   turn(90, 1000);
-//   drive(95, 1000);
-//   turn(35, 2000);
-//   drive(12, 1000);
-//   Wing.set(true);
-//   turn(0, 1000);
-
-//   drive(36, 1000);
-//   drive(-3, 1000);
-//   turn(-90, 1000);
-//   Wing.set(false);
-
-//   // Second Straight 
-//   for (int i = 0; i < 2; i++) {
-//     drive(30, 1000);
-//     turn(0, 1000);
-//     drive(30, 1000);
-//     Wing.set(true);
-//     turn(90, 1000);
-//     drive(30, 1000);
-//     drive(6, 1000);
-//     Wing.set(false);
-//     turn(-90, 1000);
-//   }
-
-//   // drive(24, 1000);
-//   // turn(0, 1000);
-
-
-
-//   // // Matxch Load Left
-//   // drive(60, 0);
-//   // turn(91, 2000);
-
-//   // drive(3, 1300);
-//   // Flytake.spinFor(vex::directionType::rev, 1440, degrees, 200, vex::velocityUnits::pct);
-//   // vex::task::sleep(500);
-
-//   // drive(-12, 500);
-//   // turn(80, 500);
-//   // drive(25, 1000);
-//   // drive(-12, 1000);
-//   // turn(90, 300);
-//   // drive(-10, 300);
-//   // turn(-72.5, 400);
-//   // turn(-145, 400);
-//   // drive(65, 1300);
-//   // turn(-142, 1800);
-//   // drive(-12, 1000);
-//   // 
-
-//   // Match Load Right
-//   // drive(60, 0);
-//   // turn(-89, 2000);
-//   // drive(3, 1300);
-//   // Intake.spinFor(vex::directionType::rev, 1440, degrees, 200, vex::velocityUnits::pct);
-//   // vex::task::sleep(500);
-//   // drive(-12, 500);
-//   // turn(-80, 500);
-//   // drive(25, 1000);
-//   // drive(-12, 1000);
-//   // turn(-89, 300);
-//   // drive(-10, 300);
-//   // turn(20, 400);
-//   // drive(65, 1300);
-//   // turn(35, 1800);
+//   desiredRPM = 300;
+//   desiredValue = 0;
 // }
+
+void autonomous(void) {
+  vex::task runDrivePID(drivePID);
+
+  // // 10 Type Shi
+  drive(2, 0);
+  turn(-45, 500);
+  drive(34, 750);
+  turn(0, 1000);
+  drive(18, 1000);
+  drive(-11, 1000);
+  while(Inertial.pitch() < 68) {
+    Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+  }
+  turn(68, 1000);
+  drive(0, 800);
+  PTO.set(true);
+  Flytake.spinFor(vex::directionType::fwd, 30, vex::timeUnits::sec, 100, vex::velocityUnits::pct);
+  while(Inertial.pitch() > 8) {
+    Arm.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
+  }
+  // // First Side Attack Type Shi
+  turn(135, 1000);
+  drive(22, 1000);
+  turn(90, 1000);
+  drive(95, 1000);
+  turn(35, 2000);
+  drive(12, 1000);
+  Wing.set(true);
+  turn(0, 1000);
+
+  drive(36, 1000);
+  drive(-3, 1000);
+  turn(-90, 1000);
+  Wing.set(false);
+
+  // Second Straight 
+  for (int i = 0; i < 2; i++) {
+    drive(30, 1000);
+    turn(0, 1000);
+    drive(30, 1000);
+    Wing.set(true);
+    turn(90, 1000);
+    drive(30, 1000);
+    drive(6, 1000);
+    Wing.set(false);
+    turn(-90, 1000);
+  }
+
+  // drive(24, 1000);
+  // turn(0, 1000);
+
+
+
+  // // Matxch Load Left
+  // drive(60, 0);
+  // turn(91, 2000);
+
+  // drive(3, 1300);
+  // Flytake.spinFor(vex::directionType::rev, 1440, degrees, 200, vex::velocityUnits::pct);
+  // vex::task::sleep(500);
+
+  // drive(-12, 500);
+  // turn(80, 500);
+  // drive(25, 1000);
+  // drive(-12, 1000);
+  // turn(90, 300);
+  // drive(-10, 300);
+  // turn(-72.5, 400);
+  // turn(-145, 400);
+  // drive(65, 1300);
+  // turn(-142, 1800);
+  // drive(-12, 1000);
+  // 
+
+  // Match Load Right
+  // drive(60, 0);
+  // turn(-89, 2000);
+  // drive(3, 1300);
+  // Intake.spinFor(vex::directionType::rev, 1440, degrees, 200, vex::velocityUnits::pct);
+  // vex::task::sleep(500);
+  // drive(-12, 500);
+  // turn(-80, 500);
+  // drive(25, 1000);
+  // drive(-12, 1000);
+  // turn(-89, 300);
+  // drive(-10, 300);
+  // turn(20, 400);
+  // drive(65, 1300);
+  // turn(35, 1800);
+}
 
 
 void usercontrol(void) {
