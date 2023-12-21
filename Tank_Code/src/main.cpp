@@ -849,8 +849,7 @@ void usercontrol(void) {
     if(moveArmUp && Inertial.pitch() < 70) {
       Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
       PTO.set(true);
-      // Flytake.spin(vex::directionType::fwd, 50, vex::velocityUnits::pct);
-      desiredRPM = 300;
+      Flytake.spin(vex::directionType::fwd, 60, vex::velocityUnits::pct);
     }
     else if(moveArmUp) {
       moveArmUp = false;
