@@ -1,6 +1,102 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
+// FL                   motor         15              
+// FR                   motor         13              
+// ML                   motor         19              
+// MR                   motor         12              
+// BL                   motor         10              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         18              
+// Wing                 digital_out   A               
+// Inertial             inertial      9               
+// PTO                  digital_out   B               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         15              
+// FR                   motor         20              
+// ML                   motor         19              
+// MR                   motor         12              
+// BL                   motor         10              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         18              
+// Wing                 digital_out   A               
+// Inertial             inertial      9               
+// PTO                  digital_out   B               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         15              
+// FR                   motor         20              
+// ML                   motor         19              
+// MR                   motor         17              
+// BL                   motor         10              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         18              
+// Wing                 digital_out   A               
+// Inertial             inertial      9               
+// PTO                  digital_out   B               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         15              
+// FR                   motor         20              
+// ML                   motor         19              
+// MR                   motor         17              
+// BL                   motor         10              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         18              
+// Wing                 digital_out   A               
+// Inertial             inertial      12              
+// PTO                  digital_out   B               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         15              
+// FR                   motor         20              
+// ML                   motor         9               
+// MR                   motor         17              
+// BL                   motor         10              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         18              
+// Wing                 digital_out   A               
+// Inertial             inertial      12              
+// PTO                  digital_out   B               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         20              
+// ML                   motor         9               
+// MR                   motor         17              
+// BL                   motor         10              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         18              
+// Wing                 digital_out   A               
+// Inertial             inertial      12              
+// PTO                  digital_out   B               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
 // FL                   motor         1               
 // FR                   motor         20              
 // ML                   motor         9               
@@ -468,128 +564,33 @@ void autonomous(void) {
 
 
 void usercontrol(void) {
-  enableDrivePID = false;
-  bool openRWing = false;
-  bool openLWing = false;
-  bool allowA = true;
-  bool allowLeft = true;
-  bool isBall = false;
-  bool armUp = false;
-  bool moveArmUp = false;
-  bool moveArmDown = true;
-
-  double above1 = 0;
   // Driver Control Main Loop
+  double kP = 1;
   while (1) {
-    int leftStick = Controller1.Axis3.value();
-    int rightStick = Controller1.Axis2.value();
-    bool L1 = Controller1.ButtonL1.pressing();
-    bool L2 = Controller1.ButtonL2.pressing();
-    bool R2 = Controller1.ButtonR2.pressing();
-    bool R1 = Controller1.ButtonR1.pressing();
-    bool A = Controller1.ButtonA.pressing();
-    bool left = Controller1.ButtonLeft.pressing();
-    int stickDeadZone = 5;
-    bool outtake = false;
+    double lateral = Controller1.Axis4.position(percent);
+    double vertical = Controller1.Axis3.position(percent);
+    double magnitude = sqrt(lateral * lateral + vertical * vertical) / 141;
 
-    if(leftStick > 0) {
-      leftStick = (leftStick * leftStick) / 200;
-    } else if(leftStick < 0) {
-      leftStick = (leftStick * leftStick) / -200;
+    double desiredHeading = atan2(lateral, vertical) * 180 / 3.14159265358979323846264338;
+    double currentHeading = Inertial.heading(degrees);
+
+    if(desiredHeading < 0) {
+      desiredHeading += 360;
     }
 
-   if(rightStick > 0) {
-      rightStick = (rightStick * rightStick) / 200;
-    } else if(leftStick < 0) {
-      rightStick = (rightStick * rightStick) / -200;
-    }
+    double lPower = (desiredHeading - currentHeading) * magnitude * kP;
+    double rPower = -(desiredHeading - currentHeading) * magnitude * kP;
 
-    // Left wheel control
-    if(abs(leftStick) > stickDeadZone) { // Check dead zone
-      FL.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
-      ML.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
-      BL.spin(vex::directionType::fwd, leftStick, vex::velocityUnits::pct);
-    }
-    else {
-      FL.stop(coast);
-      ML.stop(coast);
-      BL.stop(coast);
-    }
+    FL.spin(vex::directionType::fwd, lPower, vex::velocityUnits::pct);
+    ML.spin(vex::directionType::fwd, lPower, vex::velocityUnits::pct);
+    BL.spin(vex::directionType::fwd, lPower, vex::velocityUnits::pct);
+    FR.spin(vex::directionType::fwd, rPower, vex::velocityUnits::pct);
+    MR.spin(vex::directionType::fwd, rPower, vex::velocityUnits::pct);
+    BR.spin(vex::directionType::fwd, rPower, vex::velocityUnits::pct);
 
-    // Right wheel control
-    if(abs(rightStick) > stickDeadZone) {
-      FR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
-      MR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
-      BR.spin(vex::directionType::fwd, rightStick, vex::velocityUnits::pct);
-    }
-    else {
-      FR.stop(coast);
-      MR.stop(coast);
-      BR.stop(coast);
-    }
+    cout << magnitude << endl;
 
-    if(L1 && !armUp) {
-      moveArmUp = true;
-    }
-    if(L2) {
-      if(armUp) {
-        moveArmDown = true;
-      }
-      else { 
-        Flytake.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
-      }
-    }
-    
-    if(L1 && moveArmDown) {
-      moveArmDown = false;
-      moveArmUp = true;
-    }
-    if(L2 && moveArmUp) {
-      moveArmDown = true;
-      moveArmUp = false;
-    }
-
-    if(!L2 && !armUp) {
-      Flytake.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
-    }
-
-    if(moveArmUp && Inertial.pitch() < 70) {
-      Arm.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
-      PTO.set(true);
-      Flytake.spin(vex::directionType::fwd, 60, vex::velocityUnits::pct);
-    }
-    else if(moveArmUp) {
-      moveArmUp = false;
-      Arm.stop(coast);
-      armUp = true;
-    }
-    if(moveArmDown && Inertial.pitch() > 28) {
-      PTO.set(false);
-      Arm.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
-      Flytake.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
-    }
-    else if(moveArmDown) {
-      moveArmDown = false;
-      Arm.stop(coast);
-      armUp = false;
-    }
- 
-    if(R2 && allowA) {
-      allowA = false;
-      if(openRWing) {
-        Wing.set(true);
-      }
-      else {
-        Wing.set(false);
-      }
-      openRWing = !openRWing;
-    }
-    else if(!R2) {
-      allowA = true;
-    }
-
-    matchTime += 20;
-    wait(20, msec); // Sleep the task for a short amount of time to
+    wait(20,msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
 }
