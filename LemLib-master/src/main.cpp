@@ -5,19 +5,19 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drive motors
-pros::Motor lF(-17, pros::E_MOTOR_GEARSET_06); // left front motor. port 12, reversed
-pros::Motor lM(-9, pros::E_MOTOR_GEARSET_06); // left middle motor. port 11, reversed
-pros::Motor lB(-13, pros::E_MOTOR_GEARSET_06); // left back motor. port 1, reversed
-pros::Motor rF(1, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
+pros::Motor lF(-15, pros::E_MOTOR_GEARSET_06); // left front motor. port 12, reversed
+pros::Motor lM(-19, pros::E_MOTOR_GEARSET_06); // left middle motor. port 11, reversed
+pros::Motor lB(-10, pros::E_MOTOR_GEARSET_06); // left back motor. port 1, reversed
+pros::Motor rF(13, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
 pros::Motor rM(12, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
-pros::Motor rB(3, pros::E_MOTOR_GEARSET_06); // right back motor. port 13
+pros::Motor rB(5, pros::E_MOTOR_GEARSET_06); // right back motor. port 13
 
 // motor groups
 pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
 pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 
 // Inertial Sensor on port 2
-pros::Imu imu(10);
+pros::Imu imu(9);
 
 // tracking wheels
 // horizontal tracking wheel encoder. Rotation sensor, port 15, reversed (negative signs don't work due to a pros bug)
@@ -116,7 +116,7 @@ void competition_initialize() {}
 
 // get a path used for pure pursuit
 // this needs to be put outside a function
-ASSET(path_txt); // '.' replaced with "_" to make c++ happy
+ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 
 /**
  * Runs during auto
@@ -130,7 +130,7 @@ void autonomous() {
     // chassis.moveToPose(0, 0, 270, 4000, {.forwards = false});
     // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
     // dont turn faster than 60 (out of a maximum of 127)
-    // chassis.turnTo(10, 0, 1000, true, 100);
+    chassis.turnTo(10, 0, 1000, true, 100);
     // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
     // following the path with the back of the robot (forwards = false)
     // see line 116 to see how to define a path
@@ -138,9 +138,7 @@ void autonomous() {
     // wait until the chassis has travelled 10 inches. Otherwise the code directly after
     // the movement will run immediately
     // Unless its another movement, in which case it will wait
-    // chassis.waitUntil(10);
-    chassis.follow(path_txt, 50, 1000000);
-
+    chassis.waitUntil(10);
     pros::lcd::print(4, "Travelled 10 inches during pure pursuit!");
     // wait until the movement is done
     chassis.waitUntilDone();
@@ -153,18 +151,13 @@ void autonomous() {
 void opcontrol() {
     // controller
     // loop to continuously update motors
-    double kM = 60;
     while (true) {
         // get joystick positions
-        double vertical = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        double horizontal = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-        double heading = atan2(horizontal, vertical);
-        double magnitude = sqrt(vertical * vertical + horizontal * horizontal) / kM;
-        lemlib::Pose pose = chassis.getPose();
-        chassis.moveToPose(pose.x + horizontal + magnitude, pose.y + vertical + magnitude, heading, 100);
-
-        leftMotors.move_absolute
-
+        int vertical = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int horizontal = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+        int heading = atan2(horizontal, vertical);
+        chassis.turnTo(horizontal, vertical, 1000);
+        
         pros::delay(10);
     }
 }
