@@ -5,19 +5,21 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drive motors
-pros::Motor lF(-15, pros::E_MOTOR_GEARSET_06); // left front motor. port 12, reversed
-pros::Motor lM(-19, pros::E_MOTOR_GEARSET_06); // left middle motor. port 11, reversed
-pros::Motor lB(-10, pros::E_MOTOR_GEARSET_06); // left back motor. port 1, reversed
-pros::Motor rF(13, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
-pros::Motor rM(12, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
-pros::Motor rB(5, pros::E_MOTOR_GEARSET_06); // right back motor. port 13
+pros::Motor lT(-10, pros::E_MOTOR_GEARSET_06);
+pros::Motor lF(-7, pros::E_MOTOR_GEARSET_06); // left front motor. port 12, reversed
+pros::Motor lM(-8, pros::E_MOTOR_GEARSET_06); // left middle motor. port 11, reversed
+pros::Motor lB(-9, pros::E_MOTOR_GEARSET_06);
+pros::Motor rT(1, pros::E_MOTOR_GEARSET_06);// left back motor. port 1, reversed
+pros::Motor rF(4, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
+pros::Motor rM(3, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
+pros::Motor rB(2, pros::E_MOTOR_GEARSET_06); // right back motor. port 13
 
 // motor groups
-pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
-pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
+pros::MotorGroup leftMotors({lT, lF, lM, lB}); // left motor group
+pros::MotorGroup rightMotors({rT, rF, rM, rB}); // right motor group
 
 // Inertial Sensor on port 2
-pros::Imu imu(9);
+pros::Imu imu(6);
 
 // tracking wheels
 // horizontal tracking wheel encoder. Rotation sensor, port 15, reversed (negative signs don't work due to a pros bug)
@@ -28,10 +30,10 @@ pros::Imu imu(9);
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               &rightMotors, // right motor group
-                              12.5, // 10 inch track width
-                              lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
-                              360, // drivetrain rpm is 360
-                              8 // chase power is 2. If we had traction wheels, it would have been 8
+                              10, // 10 inch track width
+                              lemlib::Omniwheel::NEW_275, // using new 3.25" omnis
+                              600, // drivetrain rpm is 360
+                              2 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 // lateral motion controller
@@ -47,9 +49,9 @@ lemlib::ControllerSettings linearController(10, // proportional gain (kP)
 );
 
 // angular motion controller
-lemlib::ControllerSettings angularController(1.2, // proportional gain (kP)
+lemlib::ControllerSettings angularController(0.8, // proportional gain (kP)
                                              0, // integral gain (kI)
-                                             1.5, // derivative gain (kD)
+                                             0.1, // derivative gain (kD)
                                              3, // anti windup
                                              0.1, // small error range, in degrees
                                              100, // small error range timeout, in milliseconds
@@ -70,6 +72,8 @@ lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel 1, set to null
 // create the chassis
 lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors);
 
+
+double PI = 3.14159265;
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -130,7 +134,7 @@ void autonomous() {
     // chassis.moveToPose(0, 0, 270, 4000, {.forwards = false});
     // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
     // dont turn faster than 60 (out of a maximum of 127)
-    chassis.turnTo(10, 0, 1000, true, 100);
+    chassis.turnTo(10, 0, 10000);
     // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
     // following the path with the back of the robot (forwards = false)
     // see line 116 to see how to define a path
@@ -138,7 +142,7 @@ void autonomous() {
     // wait until the chassis has travelled 10 inches. Otherwise the code directly after
     // the movement will run immediately
     // Unless its another movement, in which case it will wait
-    chassis.waitUntil(10);
+    // chassis.waitUntil(10);
     pros::lcd::print(4, "Travelled 10 inches during pure pursuit!");
     // wait until the movement is done
     chassis.waitUntilDone();
@@ -148,16 +152,33 @@ void autonomous() {
 /**
  * Runs in driver control
  */
+
+
 void opcontrol() {
-    // controller
-    // loop to continuously update motors
     while (true) {
-        // get joystick positions
-        int vertical = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int horizontal = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-        int heading = atan2(horizontal, vertical);
-        chassis.turnTo(horizontal, vertical, 1000);
-        
-        pros::delay(10);
+        double vertical = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        double horizontal = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+        double target_heading = atan2(vertical, horizontal);
+        double magnitude = sqrt(vertical * vertical + horizontal * horizontal);
+        lemlib::Pose pose = chassis.getPose();
+        double currentHeading = pose.theta;
+        double deltaHeading = target_heading - currentHeading;
+        if(deltaHeading > PI) {
+            deltaHeading -= 2 * PI;
+        } else if(deltaHeading < -PI) {
+            deltaHeading += 2 * PI;
+        }
+        double leftMotorPower = 127;
+        double rightMotorPower = 127;
+        if(deltaHeading > 0) {
+            rightMotorPower -= deltaHeading * 254 / PI;
+        } else if(deltaHeading < 0)  {
+            leftMotorPower += deltaHeading * 254 / PI;
+        }
+        leftMotors.move(leftMotorPower * magnitude / 127);
+        rightMotors.move(rightMotorPower * magnitude / 127);
+
+
+        pros::delay(2);
     }
 }
