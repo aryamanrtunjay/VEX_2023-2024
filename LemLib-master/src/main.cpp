@@ -5,19 +5,29 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drive motors
-pros::Motor lT(-10, pros::E_MOTOR_GEARSET_06);
-pros::Motor lF(-7, pros::E_MOTOR_GEARSET_06); // left front motor. port 12, reversed
-pros::Motor lM(-8, pros::E_MOTOR_GEARSET_06); // left middle motor. port 11, reversed
+
+pros::Motor lF(7, pros::E_MOTOR_GEARSET_06);
+pros::Motor lM(8, pros::E_MOTOR_GEARSET_06); // left middle motor. port 11, reversed
 pros::Motor lB(-9, pros::E_MOTOR_GEARSET_06);
-pros::Motor rT(1, pros::E_MOTOR_GEARSET_06);// left back motor. port 1, reversed
-pros::Motor rF(4, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
-pros::Motor rM(3, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
+pros::Motor rF(-4, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
+pros::Motor rM(-3, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
 pros::Motor rB(2, pros::E_MOTOR_GEARSET_06); // right back motor. port 13
+pros::Motor cataLeft(20, pros::E_MOTOR_GEARSET_36);
+pros::Motor cataRight(-11, pros::E_MOTOR_GEARSET_36);
+
 
 // motor groups
+
+pros::Motor lT(10, pros::E_MOTOR_GEARSET_06);
+pros::Motor rT(-1, pros::E_MOTOR_GEARSET_06);// left back motor. port 1, reversed
 pros::MotorGroup leftMotors({lT, lF, lM, lB}); // left motor group
 pros::MotorGroup rightMotors({rT, rF, rM, rB}); // right motor group
 
+/*
+// motor groups
+pros::MotorGroup leftMotors({lF, lM, lB});
+pros::MotorGroup rightMotors({rF, rM, rB});
+*/
 // Inertial Sensor on port 2
 pros::Imu imu(6);
 
@@ -33,7 +43,7 @@ lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               10, // 10 inch track width
                               lemlib::Omniwheel::NEW_275, // using new 3.25" omnis
                               600, // drivetrain rpm is 360
-                              2 // chase power is 2. If we had traction wheels, it would have been 8
+                              6 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 // lateral motion controller
@@ -151,34 +161,73 @@ void autonomous() {
 
 /**
  * Runs in driver control
- */
-
-
+ * */
+// Tank Code
+// void opcontrol() {
+//     while(true) {
+//         double leftJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+//         double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+//         double left = pow(1.03888, abs(leftJoy));
+//         double right = pow(1.03888, abs(rightJoy));
+//         rightMotors.move(right * abs(rightJoy) / rightJoy);
+//         leftMotors.move(left * abs(leftJoy) / leftJoy);
+//         pros::delay(2);
+//     }
+// }
+// Arcade
 void opcontrol() {
-    while (true) {
-        double vertical = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        double horizontal = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-        double target_heading = atan2(vertical, horizontal);
-        double magnitude = sqrt(vertical * vertical + horizontal * horizontal);
-        lemlib::Pose pose = chassis.getPose();
-        double currentHeading = pose.theta;
-        double deltaHeading = target_heading - currentHeading;
-        if(deltaHeading > PI) {
-            deltaHeading -= 2 * PI;
-        } else if(deltaHeading < -PI) {
-            deltaHeading += 2 * PI;
+    while(true) {
+        double vert = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        double hor = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+        double magnitude = sqrt(vert * vert + hor * hor);
+        
+        if(hor <= 0) {
+            rightMotors.move(magnitude * (1-hor/127));
+            leftMotors.move(magnitude);
+        } else {
+            rightMotors.move(magnitude);
+            leftMotors.move(magnitude * (1+hor/127));
         }
-        double leftMotorPower = 127;
-        double rightMotorPower = 127;
-        if(deltaHeading > 0) {
-            rightMotorPower -= deltaHeading * 254 / PI;
-        } else if(deltaHeading < 0)  {
-            leftMotorPower += deltaHeading * 254 / PI;
-        }
-        leftMotors.move(leftMotorPower * magnitude / 127);
-        rightMotors.move(rightMotorPower * magnitude / 127);
-
 
         pros::delay(2);
     }
 }
+// Field Oriented
+// void opcontrol() {
+//     while (true) {
+//         double vertical = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+//         double horizontal = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+//         bool backwards = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
+//         double target_heading = atan2(vertical, horizontal);
+//         if(backwards) {
+//             target_heading += PI;
+//         }
+//         double magnitude = sqrt(vertical * vertical + horizontal * horizontal);
+//         lemlib::Pose pose = chassis.getPose();
+//         double currentHeading = pose.theta;
+//         double deltaHeading = target_heading - currentHeading;
+//         do {
+//             if(abs(deltaHeading) > PI) {
+//                 deltaHeading += -2 * PI * abs(deltaHeading) / deltaHeading;
+//             } 
+//         } while(abs(deltaHeading) > PI);
+//         double leftMotorPower = backwards ? -127: 127;
+//         double rightMotorPower = backwards ? -127: 127 ;
+//         if(deltaHeading > 0) {
+//             rightMotorPower -= (backwards ? -1: 1) * deltaHeading * 508 / PI;
+//         } else if(deltaHeading < 0)  {
+//             leftMotorPower += (backwards ? -1: 1) * deltaHeading * 508 / PI;
+//         }
+//         if(abs(rightMotorPower) > 127) {
+//             rightMotorPower = 127 * abs(rightMotorPower) / rightMotorPower;
+//         }
+//         if(abs(leftMotorPower) > 127) {
+//             leftMotorPower = 127 * abs(leftMotorPower) / leftMotorPower;
+//         }
+//         leftMotors.move(leftMotorPower * magnitude / 127);
+//         rightMotors.move(rightMotorPower * magnitude / 127);
+
+
+//         pros::delay(2);
+//     }
+// }
