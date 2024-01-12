@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp"
+#define DIGITAL_SENSOR_PORT 'A'
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -43,13 +44,13 @@ lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               10, // 10 inch track width
                               lemlib::Omniwheel::NEW_275, // using new 3.25" omnis
                               600, // drivetrain rpm is 360
-                              6 // chase power is 2. If we had traction wheels, it would have been 8
+                              8 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 // lateral motion controller
-lemlib::ControllerSettings linearController(10, // proportional gain (kP)
+lemlib::ControllerSettings linearController(15, // proportional gain (kP)
                                             0, // integral gain (kI)
-                                            3, // derivative gain (kD)
+                                            0, // derivative gain (kD)
                                             3, // anti windup
                                             1, // small error range, in inches
                                             100, // small error range timeout, in milliseconds
@@ -59,13 +60,13 @@ lemlib::ControllerSettings linearController(10, // proportional gain (kP)
 );
 
 // angular motion controller
-lemlib::ControllerSettings angularController(0.8, // proportional gain (kP)
+lemlib::ControllerSettings angularController(0.7, // proportional gain (kP)
                                              0, // integral gain (kI)
-                                             0.1, // derivative gain (kD)
-                                             3, // anti windup
+                                             0, // derivative gain (kD)
+                                             1, // anti windup
                                              0.1, // small error range, in degrees
                                              100, // small error range timeout, in milliseconds
-                                             3, // large error range, in degrees
+                                             1, // large error range, in degrees
                                              500, // large error range timeout, in milliseconds
                                              10 // maximum acceleration (slew)
 );
@@ -92,6 +93,7 @@ double PI = 3.14159265;
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
+    pros::ADIDigitalOut wings (DIGITAL_SENSOR_PORT);
     chassis.calibrate(); // calibrate sensors
 
     // the default rate is 50. however, if you need to change the rate, you
@@ -144,7 +146,17 @@ void autonomous() {
     // chassis.moveToPose(0, 0, 270, 4000, {.forwards = false});
     // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
     // dont turn faster than 60 (out of a maximum of 127)
-    chassis.turnTo(10, 0, 10000);
+    double currX = 0;
+    double currY = 0;
+    double theta = 0;
+    lemlib::Pose pose = chassis.getPose();
+    chassis.moveToPose(currX - 20, currY + 36, theta - 45, 1000);
+    currX -= 20;
+    currY += 36;
+    theta -= 45;
+    pose = chassis.getPose();
+    chassis.moveToPose(currX - 10, currY + 20, theta + 45, 2000);
+    // chassis.moveToPose(pose.x, pose.y + 36, pose.theta + 45, 2000);
     // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
     // following the path with the back of the robot (forwards = false)
     // see line 116 to see how to define a path
@@ -197,10 +209,14 @@ void autonomous() {
 // }
 // Field Oriented
 void opcontrol() {
+    pros::ADIDigitalOut wings (DIGITAL_SENSOR_PORT);
     while (true) {
         double vertical = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         double horizontal = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
         bool backwards = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
+        bool A = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
+        bool activateWings = true;
+        bool allowWings = true;
         double target_heading = atan2(vertical, horizontal);
         if(backwards) {
             target_heading += PI;
@@ -230,6 +246,15 @@ void opcontrol() {
         leftMotors.move(leftMotorPower * magnitude / 127);
         rightMotors.move(rightMotorPower * magnitude / 127);
 
+        if(backwards && allowWings) {
+            allowWings = false;
+            // pros::ADIDigitalOut wings (DIGITAL_SENSOR_PORT);
+            wings.set_value(activateWings);
+            activateWings = !activateWings;
+        }
+        else {
+            allowWings = true;
+        }
 
         pros::delay(2);
     }
