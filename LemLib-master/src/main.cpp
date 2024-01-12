@@ -169,65 +169,68 @@ void autonomous() {
 //         double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
 //         double left = pow(1.03888, abs(leftJoy));
 //         double right = pow(1.03888, abs(rightJoy));
-//         rightMotors.move(right * abs(rightJoy) / rightJoy);
-//         leftMotors.move(left * abs(leftJoy) / leftJoy);
+//         rightMotors.move(right * rightJoy / abs(rightJoy));
+//         leftMotors.move(left * leftJoy / abs(leftJoy));
 //         pros::delay(2);
 //     }
 // }
+
 // Arcade
+// void opcontrol() {
+//     while(true) {
+//         double vert = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+//         double hor = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+//         double turn = pow(hor / 127, 2) *127 * abs(hor) / hor;
+//         leftMotors.move(vert + hor);
+//         rightMotors.move(vert - hor);
+//         pros::delay(2);
+//     }
+// }
+
+// Other Arcade
+// void opcontrol() {
+//     while(true) {
+//         double vert = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+//         double hor = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+
+//     }
+// }
+// Field Oriented
 void opcontrol() {
-    while(true) {
-        double vert = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        double hor = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-        double magnitude = sqrt(vert * vert + hor * hor);
-        
-        if(hor <= 0) {
-            rightMotors.move(magnitude * (1-hor/127));
-            leftMotors.move(magnitude);
-        } else {
-            rightMotors.move(magnitude);
-            leftMotors.move(magnitude * (1+hor/127));
+    while (true) {
+        double vertical = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        double horizontal = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+        bool backwards = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
+        double target_heading = atan2(vertical, horizontal);
+        if(backwards) {
+            target_heading += PI;
         }
+        double magnitude = sqrt(vertical * vertical + horizontal * horizontal);
+        lemlib::Pose pose = chassis.getPose(true);
+        double currentHeading = pose.theta;
+        double deltaHeading = target_heading - currentHeading;
+        do {
+            if(abs(deltaHeading) > PI) {
+                deltaHeading += -2 * PI * abs(deltaHeading) / deltaHeading;
+            } 
+        } while(abs(deltaHeading) > PI);
+        double leftMotorPower = backwards ? -127: 127;
+        double rightMotorPower = backwards ? -127: 127;
+        if(deltaHeading > 0) {
+            rightMotorPower -= (backwards ? -1: 1) * deltaHeading * 508 / PI;
+        } else if(deltaHeading < 0)  {
+            leftMotorPower += (backwards ? -1: 1) * deltaHeading * 508 / PI;
+        }
+        if(abs(rightMotorPower) > 127) {
+            rightMotorPower = 127 * abs(rightMotorPower) / rightMotorPower;
+        }
+        if(abs(leftMotorPower) > 127) {
+            leftMotorPower = 127 * abs(leftMotorPower) / leftMotorPower;
+        }
+        leftMotors.move(leftMotorPower * magnitude / 127);
+        rightMotors.move(rightMotorPower * magnitude / 127);
+
 
         pros::delay(2);
     }
 }
-// Field Oriented
-// void opcontrol() {
-//     while (true) {
-//         double vertical = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-//         double horizontal = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-//         bool backwards = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
-//         double target_heading = atan2(vertical, horizontal);
-//         if(backwards) {
-//             target_heading += PI;
-//         }
-//         double magnitude = sqrt(vertical * vertical + horizontal * horizontal);
-//         lemlib::Pose pose = chassis.getPose();
-//         double currentHeading = pose.theta;
-//         double deltaHeading = target_heading - currentHeading;
-//         do {
-//             if(abs(deltaHeading) > PI) {
-//                 deltaHeading += -2 * PI * abs(deltaHeading) / deltaHeading;
-//             } 
-//         } while(abs(deltaHeading) > PI);
-//         double leftMotorPower = backwards ? -127: 127;
-//         double rightMotorPower = backwards ? -127: 127 ;
-//         if(deltaHeading > 0) {
-//             rightMotorPower -= (backwards ? -1: 1) * deltaHeading * 508 / PI;
-//         } else if(deltaHeading < 0)  {
-//             leftMotorPower += (backwards ? -1: 1) * deltaHeading * 508 / PI;
-//         }
-//         if(abs(rightMotorPower) > 127) {
-//             rightMotorPower = 127 * abs(rightMotorPower) / rightMotorPower;
-//         }
-//         if(abs(leftMotorPower) > 127) {
-//             leftMotorPower = 127 * abs(leftMotorPower) / leftMotorPower;
-//         }
-//         leftMotors.move(leftMotorPower * magnitude / 127);
-//         rightMotors.move(rightMotorPower * magnitude / 127);
-
-
-//         pros::delay(2);
-//     }
-// }
