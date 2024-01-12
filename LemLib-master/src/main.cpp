@@ -85,6 +85,9 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors
 
 
 double PI = 3.14159265;
+double cX = 0;
+double cY = 0;
+double cT = 0;
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -134,41 +137,63 @@ void competition_initialize() {}
 // this needs to be put outside a function
 ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 
+void moveBot(double x, double y, double theta, int timeout, bool fwd = true) {
+    chassis.moveToPose(cX + x, cY + y, cT + theta, timeout, {.forwards = fwd});
+    cX += x;
+    cY += y;
+    cT += theta;
+}
+
+void moveBot(double x, double y, int timeout, bool fwd = true) {
+    if(fwd) {
+        chassis.moveToPoint(cX + x, cY + y, timeout);
+        cX += x;
+        cY += y;
+    }
+    else {
+        chassis.moveToPoint(cX - x, cY - y, timeout);
+        cX += x;
+        cY += y;
+    }
+
+}
+
 /**
  * Runs during auto
  *
  * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
 void autonomous() {
-    // example movement: Move to x: 20 and y: 15, and face heading 90. Timeout set to 4000 ms
-    // chassis.moveToPose(0, 10, 90, 4000);
-    // example movement: Move to x: 0 and y: 0 and face heading 270, going backwards. Timeout set to 4000ms
-    // chassis.moveToPose(0, 0, 270, 4000, {.forwards = false});
-    // example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
-    // dont turn faster than 60 (out of a maximum of 127)
-    double currX = 0;
-    double currY = 0;
-    double theta = 0;
-    lemlib::Pose pose = chassis.getPose();
-    chassis.moveToPose(currX - 20, currY + 36, theta - 45, 1000);
-    currX -= 20;
-    currY += 36;
-    theta -= 45;
-    pose = chassis.getPose();
-    chassis.moveToPose(currX - 10, currY + 20, theta + 45, 2000);
-    // chassis.moveToPose(pose.x, pose.y + 36, pose.theta + 45, 2000);
-    // example movement: Follow the path in path.txt. Lookahead at 15, Timeout set to 4000
-    // following the path with the back of the robot (forwards = false)
-    // see line 116 to see how to define a path
-    // chassis.follow(example_txt, 15, 4000, false);
-    // wait until the chassis has travelled 10 inches. Otherwise the code directly after
-    // the movement will run immediately
-    // Unless its another movement, in which case it will wait
-    // chassis.waitUntil(10);
-    pros::lcd::print(4, "Travelled 10 inches during pure pursuit!");
-    // wait until the movement is done
-    chassis.waitUntilDone();
-    pros::lcd::print(4, "pure pursuit finished!");
+    moveBot(-39.67, -63.11, 0.0, 3000, false);
+    moveBot(-20.2, 36.33, 0.0, 3000, false);
+    moveBot(3.11, -27.59, 353.33, 3000, true);
+    moveBot(92.48, -3.69, -273.33, 3000, false);
+    moveBot(23.31, 31.47, -80.0, 3000, false);
+    moveBot(-14.18, -19.1, 33.33, 3000, true);
+    moveBot(-35.75, 11.33, 56.67, 3000, true);
+    moveBot(2.33, 13.99, 116.67, 3000, true);
+    moveBot(8.16, 7.81, 36.66, 3000, true);
+    moveBot(25.07, 2.1, 26.67, 3000, true);
+    moveBot(-37.89, -0.71, -3.33, 3000, false);
+    moveBot(5.63, 14.76, -53.34, 3000, true);
+    moveBot(8.75, 5.83, 36.67, 3000, true);
+    moveBot(24.28, 0.19, 20.0, 3000, true);
+    moveBot(-12.6, 0.0, -180.0, 3000, false);
+    moveBot(-0.22, -68.38, -90.0, 3000, true);
+    moveBot(-89.37, 4.4, 93.33, 3000, true);
+    moveBot(92.48, -3.69, -13.33, 3000, false);
+    moveBot(23.31, 31.47, -80.0, 3000, false);
+    moveBot(-14.18, -19.1, 33.33, 3000, true);
+    moveBot(-35.75, 11.33, 56.67, 3000, true);
+    moveBot(2.33, 13.99, 116.67, 3000, true);
+    moveBot(8.16, 7.81, 36.66, 3000, true);
+    moveBot(25.07, 2.1, 26.67, 3000, true);
+    moveBot(-37.89, -0.71, -3.33, 3000, false);
+    moveBot(5.63, 14.76, -53.34, 3000, true);
+    moveBot(8.75, 5.83, 36.67, 3000, true);
+    moveBot(24.28, 0.19, 20.0, 3000, true);
+    moveBot(-12.6, 0.0, -180.0, 3000, false);
+    moveBot(-0.22, -68.38, -90.0, 3000, true);
 }
 
 /**
@@ -215,6 +240,7 @@ void opcontrol() {
         double horizontal = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
         bool backwards = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
         bool A = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
+        bool R1 = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
         bool activateWings = true;
         bool allowWings = true;
         double target_heading = atan2(vertical, horizontal);
@@ -254,6 +280,11 @@ void opcontrol() {
         }
         else {
             allowWings = true;
+        }
+
+        if(R1) {
+            cataLeft.move(127);
+            cataRight.move(127);
         }
 
         pros::delay(2);
