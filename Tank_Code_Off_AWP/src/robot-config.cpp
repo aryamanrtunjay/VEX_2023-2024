@@ -17,9 +17,9 @@ motor BR = motor(PORT5, ratio6_1, false);
 controller Controller1 = controller(primary);
 motor Arm = motor(PORT8, ratio36_1, false);
 motor Flytake = motor(PORT18, ratio6_1, false);
-digital_out Wing = digital_out(Brain.ThreeWirePort.A);
+digital_out Wing = digital_out(Brain.ThreeWirePort.C);
 inertial Inertial = inertial(PORT12);
-digital_out PTO = digital_out(Brain.ThreeWirePort.B);
+digital_out PTO = digital_out(Brain.ThreeWirePort.G);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

@@ -10,6 +10,54 @@
 // Controller1          controller                    
 // Arm                  motor         8               
 // Flytake              motor         18              
+// Wing                 digital_out   C               
+// Inertial             inertial      12              
+// PTO                  digital_out   G               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         19              
+// ML                   motor         9               
+// MR                   motor         17              
+// BL                   motor         15              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         18              
+// Wing                 digital_out   B               
+// Inertial             inertial      12              
+// PTO                  digital_out   G               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         19              
+// ML                   motor         9               
+// MR                   motor         17              
+// BL                   motor         15              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         18              
+// Wing                 digital_out   A               
+// Inertial             inertial      12              
+// PTO                  digital_out   G               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// FL                   motor         1               
+// FR                   motor         19              
+// ML                   motor         9               
+// MR                   motor         17              
+// BL                   motor         15              
+// BR                   motor         5               
+// Controller1          controller                    
+// Arm                  motor         8               
+// Flytake              motor         18              
 // Wing                 digital_out   A               
 // Inertial             inertial      12              
 // PTO                  digital_out   B               
