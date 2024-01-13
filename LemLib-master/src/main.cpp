@@ -164,36 +164,51 @@ void moveBot(double x, double y, int timeout, bool fwd = true) {
  * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
 void autonomous() {
-    moveBot(-39.67, -63.11, 0.0, 3000, false);
-    moveBot(-20.2, 36.33, 0.0, 3000, false);
-    moveBot(3.11, -27.59, 353.33, 3000, true);
-    moveBot(92.48, -3.69, -273.33, 3000, false);
-    moveBot(23.31, 31.47, -80.0, 3000, false);
-    moveBot(-14.18, -19.1, 33.33, 3000, true);
-    moveBot(-35.75, 11.33, 56.67, 3000, true);
-    moveBot(2.33, 13.99, 116.67, 3000, true);
-    moveBot(8.16, 7.81, 36.66, 3000, true);
-    moveBot(25.07, 2.1, 26.67, 3000, true);
-    moveBot(-37.89, -0.71, -3.33, 3000, false);
-    moveBot(5.63, 14.76, -53.34, 3000, true);
-    moveBot(8.75, 5.83, 36.67, 3000, true);
-    moveBot(24.28, 0.19, 20.0, 3000, true);
-    moveBot(-12.6, 0.0, -180.0, 3000, false);
-    moveBot(-0.22, -68.38, -90.0, 3000, true);
-    moveBot(-89.37, 4.4, 93.33, 3000, true);
-    moveBot(92.48, -3.69, -13.33, 3000, false);
-    moveBot(23.31, 31.47, -80.0, 3000, false);
-    moveBot(-14.18, -19.1, 33.33, 3000, true);
-    moveBot(-35.75, 11.33, 56.67, 3000, true);
-    moveBot(2.33, 13.99, 116.67, 3000, true);
-    moveBot(8.16, 7.81, 36.66, 3000, true);
-    moveBot(25.07, 2.1, 26.67, 3000, true);
-    moveBot(-37.89, -0.71, -3.33, 3000, false);
-    moveBot(5.63, 14.76, -53.34, 3000, true);
-    moveBot(8.75, 5.83, 36.67, 3000, true);
-    moveBot(24.28, 0.19, 20.0, 3000, true);
-    moveBot(-12.6, 0.0, -180.0, 3000, false);
-    moveBot(-0.22, -68.38, -90.0, 3000, true);
+    // moveBot(-39.67, -63.11, 0.0, 3000, false);
+    // moveBot(-20.2, 36.33, 0.0, 3000, false);
+    // moveBot(3.11, -27.59, 353.33, 3000, true);
+    // moveBot(92.48, -3.69, -273.33, 3000, false);
+    // moveBot(23.31, 31.47, -80.0, 3000, false);
+    // moveBot(-14.18, -19.1, 33.33, 3000, true);
+    // moveBot(-35.75, 11.33, 56.67, 3000, true);
+    // moveBot(2.33, 13.99, 116.67, 3000, true);
+    // moveBot(8.16, 7.81, 36.66, 3000, true);
+    // moveBot(25.07, 2.1, 26.67, 3000, true);
+    // moveBot(-37.89, -0.71, -3.33, 3000, false);
+    // moveBot(5.63, 14.76, -53.34, 3000, true);
+    // moveBot(8.75, 5.83, 36.67, 3000, true);
+    // moveBot(24.28, 0.19, 20.0, 3000, true);
+    // moveBot(-12.6, 0.0, -180.0, 3000, false);
+    // moveBot(-0.22, -68.38, -90.0, 3000, true);
+    // moveBot(-89.37, 4.4, 93.33, 3000, true);
+    // moveBot(92.48, -3.69, -13.33, 3000, false);
+    // moveBot(23.31, 31.47, -80.0, 3000, false);
+    // moveBot(-14.18, -19.1, 33.33, 3000, true);
+    // moveBot(-35.75, 11.33, 56.67, 3000, true);
+    // moveBot(2.33, 13.99, 116.67, 3000, true);
+    // moveBot(8.16, 7.81, 36.66, 3000, true);
+    // moveBot(25.07, 2.1, 26.67, 3000, true);
+    // moveBot(-37.89, -0.71, -3.33, 3000, false);
+    // moveBot(5.63, 14.76, -53.34, 3000, true);
+    // moveBot(8.75, 5.83, 36.67, 3000, true);
+    // moveBot(24.28, 0.19, 20.0, 3000, true);
+    // moveBot(-12.6, 0.0, -180.0, 3000, false);
+    // moveBot(-0.22, -68.38, -90.0, 3000, true);
+    moveBot(0.25, 15.0, 3000, fwd = false);
+    moveBot(0.29, 15.0, 3000, fwd = false);
+    moveBot(0.36, 15.0, 3000, fwd = false);
+    moveBot(0.6, 14.99, 3000, fwd = false);
+    moveBot(1.02, 14.96, 3000, fwd = false);
+    moveBot(1.69, 14.9, 3000, fwd = false);
+    moveBot(2.85, 14.72, 3000, fwd = false);
+    moveBot(5.02, 14.09, 3000, fwd = false);
+    moveBot(8.74, 12.06, 3000, fwd = false);
+    moveBot(12.62, 7.76, 3000, fwd = false);
+    moveBot(14.66, 2.82, 3000, fwd = false);
+    moveBot(14.96, -0.21, 3000, fwd = false);
+    moveBot(9.59, -1.0, 3000, fwd = false);
+    moveBot(0.0, 0.0, 3000, fwd = false);  
+
 }
 
 /**
