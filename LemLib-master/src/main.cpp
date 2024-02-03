@@ -7,22 +7,22 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drive motors
 
-// pros::Motor lF(7, pros::E_MOTOR_GEARSET_06);
-pros::Motor lM(8, pros::E_MOTOR_GEARSET_06); // left middle motor. port 11, reversed
-pros::Motor lB(-9, pros::E_MOTOR_GEARSET_06);
-// pros::Motor rF(-4, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
-pros::Motor rM(-3, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
-pros::Motor rB(2, pros::E_MOTOR_GEARSET_06); // right back motor. port 13
+pros::Motor lF(1, pros::E_MOTOR_GEARSET_06);
+pros::Motor lM(2, pros::E_MOTOR_GEARSET_06); // left middle motor. port 11, reversed
+pros::Motor lB(-3, pros::E_MOTOR_GEARSET_06);
+pros::Motor lT(4, pros::E_MOTOR_GEARSET_06);
+pros::Motor rF(-10, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
+pros::Motor rM(-9, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
+pros::Motor rB(8, pros::E_MOTOR_GEARSET_06); // right back motor. port 13
+pros::Motor rT(-7, pros::E_MOTOR_GEARSET_06);// left back motor. port 1, reversed
 pros::Motor cataLeft(-20, pros::E_MOTOR_GEARSET_36);
 pros::Motor cataRight(11, pros::E_MOTOR_GEARSET_36);
 
 
 // motor groups
 
-pros::Motor lT(10, pros::E_MOTOR_GEARSET_06);
-pros::Motor rT(-1, pros::E_MOTOR_GEARSET_06);// left back motor. port 1, reversed
-pros::MotorGroup leftMotors({lT, lM, lB}); // left motor group
-pros::MotorGroup rightMotors({rT, rM, rB}); // right motor group
+pros::MotorGroup leftMotors({lF, lT, lM, lB}); // left motor group
+pros::MotorGroup rightMotors({rF, rT, rM, rB}); // right motor group
 
 /*
 // motor groups
@@ -231,45 +231,60 @@ void autonomous() {
     // wings.set_value(true);
 }
 
+
+void opcontrol() {
+    while(true) {
+        double leftJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+        // double left = pow(1.03888, abs(leftJoy)) * abs(leftJoy) / leftJoy;
+        // double right = pow(1.0388, abs(rightJoy)) * abs(rightJoy) / rightJoy;
+        double left = pow(leftJoy / 127, 3) * 127;
+        double right = pow(rightJoy / 127, 3) * 127;
+        leftMotors.move(left);
+        rightMotors.move(right);
+        pros::delay(2);
+    };
+}
+
 /**
  * Runs in driver control
  * */
 // Tank Code
-void opcontrol() {
-    bool allowWings = true;
-    bool activateWings = false;
-    pros::ADIDigitalOut wings (DIGITAL_SENSOR_PORT);
-    while(true) {
-        double leftJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-        double left = pow(1.03888, abs(leftJoy));
-        double right = pow(1.03888, abs(rightJoy));
+// void opcontrol() {
+//     bool allowWings = true;
+//     bool activateWings = false;
+//     pros::ADIDigitalOut wings (DIGITAL_SENSOR_PORT);
+//     while(true) {
+//         double leftJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+//         double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+//         double left = pow(1.03888, abs(leftJoy));
+//         double right = pow(1.03888, abs(rightJoy));
 
-        bool L1 = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
-        bool R1 = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+//         bool L1 = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
+//         bool R1 = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
 
-        rightMotors.move(right * rightJoy / abs(rightJoy));
-        leftMotors.move(left * leftJoy / abs(leftJoy));
+//         rightMotors.move(right * rightJoy / abs(rightJoy));
+//         leftMotors.move(left * leftJoy / abs(leftJoy));
 
-        if(L1 && allowWings) {
-            allowWings = false;
-            wings.set_value(!activateWings);
-            activateWings = !activateWings;
-            cataLeft.move(127);
-            cataRight.move(127);
-        }
-        else if(!L1) {
-            allowWings = true;
-        }
+//         if(L1 && allowWings) {
+//             allowWings = false;
+//             wings.set_value(!activateWings);
+//             activateWings = !activateWings;
+//             cataLeft.move(127);
+//             cataRight.move(127);
+//         }
+//         else if(!L1) {
+//             allowWings = true;
+//         }
 
-        if(R1) {
-            cataLeft.move(127);
-            cataRight.move(127);
-        }
+//         if(R1) {
+//             cataLeft.move(127);
+//             cataRight.move(127);
+//         }
 
-        pros::delay(2);
-    }
-}
+//         pros::delay(2);
+//     }
+// }
 
 // Arcade
 // void opcontrol() {
