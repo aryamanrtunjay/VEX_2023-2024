@@ -240,8 +240,8 @@ void opcontrol() {
     while(true) {
         double leftJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-        bool w = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
-        bool h = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
+        int w = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+        int h = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
         // double left = pow(1.03888, abs(leftJoy)) * abs(leftJoy) / leftJoy;
         // double right = pow(1.0388, abs(rightJoy)) * abs(rightJoy) / rightJoy;
         double left = pow(leftJoy / 127, 3) * 127;
@@ -249,7 +249,7 @@ void opcontrol() {
         leftMotors.move(left);
         rightMotors.move(right);
 
-        if(w) {
+        if(w == 1) {
             if(wingState) {
                 wings.set_value(false);
                 wingState = false;
@@ -259,7 +259,7 @@ void opcontrol() {
             }
         } 
 
-        if(h) {
+        if(h == 1) {
             hang.set_value(false);
         }
 
