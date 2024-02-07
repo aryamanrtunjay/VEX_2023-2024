@@ -244,7 +244,7 @@ void opcontrol() {
         double leftJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
         int w = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
-        int h = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
+        int h = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
         // double left = pow(1.03888, abs(leftJoy)) * abs(leftJoy) / leftJoy;
         // double right = pow(1.0388, abs(rightJoy)) * abs(rightJoy) / rightJoy;
         double left = pow(leftJoy / 127, 3) * 127;
