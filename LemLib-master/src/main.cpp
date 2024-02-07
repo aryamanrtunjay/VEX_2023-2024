@@ -235,7 +235,9 @@ void autonomous() {
 
 void opcontrol() {
     bool wingState = false;
+    bool hangState = false;
     bool allowWings = false;
+    bool allowHangPist = false;
     pros::ADIDigitalOut hang (HANG_PORT);
     pros::ADIDigitalOut wings (WINGS_PORT);
     while(true) {
@@ -255,12 +257,17 @@ void opcontrol() {
             wings.set_value(!wingState);
             wingState = !wingState;
         } 
-        else if(w == 0) {
+        else {
             allowWings = true;
         }
 
-        if(h == 1) {
-            hang.set_value(false);
+        if(allowHangPist && h == 1) {
+            allowHangPist = false;
+            hang.set_value(!hangState);
+            hangState = !hangState;
+        } 
+        else {
+            allowHangPist = true;
         }
 
         pros::delay(2);
