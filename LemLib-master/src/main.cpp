@@ -1,7 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp"
-#define DIGITAL_SENSOR_PORT 'C'
-
+#define WINGS_PORT 'A'
+#define HANG_PORT 'B'
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
@@ -96,7 +96,8 @@ double cT = 0;
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
-    pros::ADIDigitalOut wings (DIGITAL_SENSOR_PORT);
+    pros::ADIDigitalOut wings (WINGS_PORT);
+    pros::ADIDigitalOut hang (HANG_PORT);
     chassis.calibrate(); // calibrate sensors
 
     // the default rate is 50. however, if you need to change the rate, you
@@ -157,7 +158,7 @@ void moveBot(double x, double y, int timeout, bool fwd = true) {
  * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
 void autonomous() {
-    pros::ADIDigitalOut wings (DIGITAL_SENSOR_PORT);
+    pros::ADIDigitalOut wings (WINGS_PORT);
     moveBot(-19.67, 48, 0.0, 1800, false);
     moveBot(-2, -35.59, 353.33, 1000, true);
     moveBot(0, 0, 80, 1500, false);
@@ -233,15 +234,35 @@ void autonomous() {
 
 
 void opcontrol() {
+    bool wingState = false;
+    pros::ADIDigitalOut hang (HANG_PORT);
+    pros::ADIDigitalOut wings (WINGS_PORT);
     while(true) {
         double leftJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+        double w = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+        double h = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
         // double left = pow(1.03888, abs(leftJoy)) * abs(leftJoy) / leftJoy;
         // double right = pow(1.0388, abs(rightJoy)) * abs(rightJoy) / rightJoy;
         double left = pow(leftJoy / 127, 3) * 127;
         double right = pow(rightJoy / 127, 3) * 127;
         leftMotors.move(left);
         rightMotors.move(right);
+
+        if(w) {
+            if(wingState) {
+                wings.set_value(false);
+                wingState = false;
+            } else {
+                wings.set_value(true);
+                wingState = true;
+            }
+        } 
+
+        if(h) {
+            hang.set_value(false);
+        }
+
         pros::delay(2);
     };
 }
