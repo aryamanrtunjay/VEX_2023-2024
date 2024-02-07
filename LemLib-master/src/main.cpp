@@ -1,7 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #define WINGS_PORT 'A'
-#define HANG_PORT 'B'
+#define HANG_PORT 'C'
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
@@ -240,8 +240,8 @@ void opcontrol() {
     while(true) {
         double leftJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-        double w = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
-        double h = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
+        bool w = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+        bool h = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
         // double left = pow(1.03888, abs(leftJoy)) * abs(leftJoy) / leftJoy;
         // double right = pow(1.0388, abs(rightJoy)) * abs(rightJoy) / rightJoy;
         double left = pow(leftJoy / 127, 3) * 127;
