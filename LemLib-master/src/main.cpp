@@ -257,7 +257,7 @@ void opcontrol() {
             wings.set_value(!wingState);
             wingState = !wingState;
         } 
-        else {
+        else if(w == 0) {
             allowWings = true;
         }
 
