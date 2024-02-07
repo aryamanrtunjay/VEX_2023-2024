@@ -1,7 +1,8 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #define WINGS_PORT 'A'
-#define HANG_PORT 'C'
+#define INTAKE_PORT 'H'
+#define HANG_PORT 'B'
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
@@ -235,10 +236,9 @@ void autonomous() {
 
 void opcontrol() {
     bool wingState = false;
-    bool hangState = false;
     bool allowWings = false;
-    bool allowHangPist = false;
     pros::ADIDigitalOut hang (HANG_PORT);
+    pros::ADIDigitalOut intake (INTAKE_PORT);
     pros::ADIDigitalOut wings (WINGS_PORT);
     while(true) {
         double leftJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -261,13 +261,12 @@ void opcontrol() {
             allowWings = true;
         }
 
-        if(allowHangPist && h == 1) {
-            allowHangPist = false;
-            hang.set_value(!hangState);
-            hangState = !hangState;
-        } 
-        else {
-            allowHangPist = true;
+        if(h == 1) {
+            intake.set_value(true);
+            hang.set_value(false);
+        } else {
+            intake.set_value(false);
+            hang.set_value(true);
         }
 
         pros::delay(2);
