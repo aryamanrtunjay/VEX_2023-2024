@@ -139,8 +139,8 @@ void competition_initialize() {}
 // this needs to be put outside a function
 ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 
-void moveBot(double x, double y, double theta, int timeout, bool fwd = true) {
-    chassis.moveToPose(cX + x, cY + y, cT + theta, timeout, {.forwards = !fwd});
+void moveBot(double x, double y, double theta, int timeout, bool bwd = false) {
+    chassis.moveToPose(cX + x, cY + y, cT + theta, timeout, {.forwards = !bwd});
     cX += x;
     cY += y;
     cT += theta;
@@ -160,77 +160,25 @@ void moveBot(double x, double y, int timeout, bool fwd = true) {
  */
 void autonomous() {
     pros::ADIDigitalOut wings (WINGS_PORT);
-    moveBot(-19.67, 48, 0.0, 1800, false);
-    moveBot(-2, -35.59, 353.33, 1000, true);
-    moveBot(0, 0, 80, 1500, false);
-
-    // -- Start Push 1
-
-    //moveBot(0, 0, 110, 1000, false);
-    moveBot(20.48, -5.69, 12.4, 2000, false);
-    moveBot(84, 0, 0, 1500, false);
-    moveBot(0, 0, 135, 1000, false);
-    moveBot(16, 45, -45, 1100, true);
-    moveBot(0, -29, 0, 1100, false);
-    moveBot(0, 0, -70, 1000, false);
-    moveBot(-48, 18, 25, 1500, true);
-
+    pros::ADIDigitalOut intake (INTAKE_PORT);
+    
+    // -------------- Close Side Quals --------------
+    cT = -45;
+    moveBot(-23, 31, 45, 1000, false);
+    moveBot(0, -13, 0, 400, true);
+    moveBot(0, 0, -45, 500, false);
+    moveBot(22, -18, 0, 1000, true);
     wings.set_value(true);
-    moveBot(0, 0, 90, 1000, false);
-    moveBot(16, 16, 45, 1500, true);
-    moveBot(35, 0, 60, 1500, true);
-    moveBot(-24, 0, 0, 1500, false);
+    moveBot(0, 0, -45, 500, true);
+    moveBot(32, 0, 0, 1000, true);
+    moveBot(0, 0, 0, 0, false);
 
-    // // Return to start
+    // -------------- Close Side Elims -------------- 
+    cT = 38;
+    moveBot(21, 45, 0, 1000, false);
+    wings.set_value(false);
+    moveBot(20, 6, 52, 700, false);
 
-    // moveBot(-11, 0, 0, 1500, false);
-    // wings.set_value(false);
-    // moveBot(0, 0, 90, 1000, false);
-    // moveBot(0, -60, 0, 2000, true);
-    // moveBot(0, 0, 90, 1000, true);
-    // moveBot(0, -70, 0, 2000, true);
-    // moveBot(0, 0, 90, 1000, false);
-    // moveBot(-23, 10, -120, true);
-
-
-
-
-    // moveBot(23.31, 31.47, -80.0, 3000, false);
-    // moveBot(-14.18, -19.1, 33.33, 3000, true);
-    // moveBot(-35.75, 11.33, 56.67, 3000, true);
-    // moveBot(2.33, 13.99, 116.67, 3000, true);
-    // moveBot(8.16, 7.81, 36.66, 3000, true);
-    // moveBot(25.07, 2.1, 26.67, 3000, true);
-    // moveBot(-37.89, -0.71, -3.33, 3000, false);
-    // moveBot(5.63, 14.76, -53.34, 3000, true);
-    // moveBot(8.75, 5.83, 36.67, 3000, true);
-    // moveBot(24.28, 0.19, 20.0, 3000, true);
-    // moveBot(-12.6, 0.0, -180.0, 3000, false);
-    // moveBot(-0.22, -68.38, -90.0, 3000, true);
-    // moveBot(-89.37, 4.4, 93.33, 3000, true);
-    // moveBot(92.48, -3.69, -13.33, 3000, false);
-    // moveBot(23.31, 31.47, -80.0, 3000, false);
-    // moveBot(-14.18, -19.1, 33.33, 3000, true);
-    // moveBot(-35.75, 11.33, 56.67, 3000, true);
-    // moveBot(2.33, 13.99, 116.67, 3000, true);
-    // moveBot(8.16, 7.81, 36.66, 3000, true);
-    // moveBot(25.07, 2.1, 26.67, 3000, true);
-    // moveBot(-37.89, -0.71, -3.33, 3000, false);
-    // moveBot(5.63, 14.76, -53.34, 3000, true);
-    // moveBot(8.75, 5.83, 36.67, 3000, true);
-    // moveBot(24.28, 0.19, 20.0, 3000, true);
-    // moveBot(-12.6, 0.0, -180.0, 3000, false);
-    // moveBot(-0.22, -68.38, -90.0, 3000, true);
-
-    // moveBot(0, -32, 0, 700, true);
-    // moveBot(-36, -20, 90, 2500, true);
-    // wings.set_value(true);
-    // moveBot(12, 0, 90, 1500, false);
-    // wings.set_value(false);
-    // moveBot(-12, 11, 180, 3000, true);
-    // moveBot(0, 0, 215, 2000, true);
-    // moveBot(5, 2, 215, 1000, true);
-    // wings.set_value(true);
 }
 
 
