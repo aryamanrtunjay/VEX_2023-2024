@@ -28,6 +28,8 @@ for line in in_file.readlines():
             pos.append(y - startY)
             pos.append(float(splt[3]) - startHeading)
 
+            pos.append((math.sqrt(pos[0] ** 2 + pos[1] ** 2) / (43.19689 * ((360 - pos[2]))/360) * 1000 + 150))
+            
             if(abs(pos[2] - (math.atan2(startY - y, startX - x) * 180 / 3.14)) <= 45):
                 pos.append("true")
             else:
@@ -39,6 +41,6 @@ for line in in_file.readlines():
             positions.append(pos)
         
 for i in positions:
-    print("moveBot(" + str(round(i[0], 3)) + ", " + str(round(i[1], 3)) + ", " + str(round(i[2], 3)) + ", " + i[3] + ");")
+    print("moveBot(" + str(round(i[0], 3)) + ", " + str(round(i[1], 3)) + ", " + str(round(i[2], 3)) + ", " + str(round(i[3], 3)), i[4] + ");")
 
 # "x, y, theta, backwards"
