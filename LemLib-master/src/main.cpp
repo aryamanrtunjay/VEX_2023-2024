@@ -61,7 +61,7 @@ lemlib::ControllerSettings linearController(600, // proportional gain (kP)
 );
 
 // angular motion controller
-lemlib::ControllerSettings angularController(0.9, // proportional gain (kP)
+lemlib::ControllerSettings angularController(0.8, // proportional gain (kP)
                                              0.01, // integral gain (kI)
                                              0, // derivative gain (kD)
                                              1, // anti windup
@@ -135,9 +135,6 @@ void disabled() {}
  */
 void competition_initialize() {}
 
-// get a path used for pure pursuit
-// this needs to be put outside a function
-ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 
 void moveBot(double x, double y, double theta, int timeout, bool bwd = false) {
     chassis.moveToPose(cX + x, cY + y, cT + theta, timeout, {.forwards = !bwd});
@@ -147,23 +144,82 @@ void moveBot(double x, double y, double theta, int timeout, bool bwd = false) {
 }
 
 void moveBot(double x, double y, int timeout, bool fwd = true) {
-    chassis.moveToPoint(cX + x, cY + y, timeout);
+    chassis.moveToPoint(cX + x, cY + y, timeout, !fwd, 21);
     cX += x;
     cY += y;
 
 }
 
 /**
- * Runs during auto
+ * Runs during autooveBot(0, 0, -45, 500, true);
+    moveBot(18, -18, 0.0, 1000, true);
+    moveBot(0, 0, 45, 500, true);oveBot(0, 0, -45, 500, true);
+    moveBot(18, -18, 0.0, 1000, true);
+    moveBot(0, 0, 45, 500, true);
+    moveBot(0, -5, 0, 1000, true);
+    moveBot(0, 8, 0, 1000, false);
+    moveBot(0, 0, 180, 1000, false);
+    moveBot(-24, 25, -90, 4000, true);
+    moveBot(-21, 0, 0, 2000, true);
+    moveBot(0, 0, 80, 500, false);
+    moveBot(0, -5, 0, 1000, true);
+    moveBot(0, 8, 0, 1000, false);
+    moveBot(0, 0, 180, 1000, false);
+    moveBot(-24, 25, -90, 4000, true);
+    moveBot(-21, 0, 0, 2000, true);
+    moveBot(0, 0, 80, 500, false);
  *
  * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
+void closeSideElims(pros::ADIDigitalOut wings, pros::ADIDigitalOut intake) {
+    moveBot(0, 0, 26, 500, false);
+    moveBot(21.667, 43.641, 0.0, 1500, false);
+    moveBot(19.524, 4.898, 64, 1500, false);
+    moveBot(-20.872, -29.939, -90, 2000, true);
+    moveBot(-32.135, -4.414, 90, 1500, true);
+    moveBot(0, 0, 90, 500, false);
+    moveBot(0, 12.5, 0, 750, true);
+    moveBot(0, -7, 0, 1000, false);
+    
+}
+
+void closeSideQuals(pros::ADIDigitalOut wings, pros::ADIDigitalOut intake) {
+    moveBot(0, 0, -45, 500, true);
+    moveBot(18, -18, 0.0, 1000, true);
+    moveBot(0, 0, 45, 500, true);
+    moveBot(0, -5, 0, 1000, true);
+    moveBot(0, 8, 0, 1000, false);
+    moveBot(0, 0, 180, 1000, false);
+    moveBot(-24, 25, -90, 4000, true);
+    moveBot(-21, 0, 0, 2000, true);
+    moveBot(0, 0, 80, 500, false);
+}
+
+void FarSideQuals(pros::ADIDigitalOut wings, pros::ADIDigitalOut intake) {
+    moveBot(0, 2.5, 0, 600, false);
+    moveBot(0, -29, 3000, true);
+    moveBot(26, -27, -45, 1500, true);
+    moveBot(0, 0, -45, 1400, false);
+    moveBot(-10, 0, 0, 1400, false);
+    moveBot(30, 0, 0, 1400, true);
+    moveBot(-25, 0, 0, 1400, false);
+    moveBot(0, 0, 180, 1500, false);
+    moveBot(-5, 0, 0, 1500, true);
+    moveBot(20, 0, 0, 1500, false);
+    moveBot(-25, 0, 0, 1500, true);
+    moveBot(0, 0, -78, 1500, false);
+    moveBot(18, 53, 0, 1500, false);
+    // moveBot(0, 0, -60, 1000, false);
+
+
+}
+
 void autonomous() {
     pros::ADIDigitalOut wings (WINGS_PORT);
     pros::ADIDigitalOut intake (INTAKE_PORT);
     
-    
-
+    // closeSideElims(wings, intake);
+    FarSideQuals(wings, intake);
 }
 
 

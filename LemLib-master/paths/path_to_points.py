@@ -4,7 +4,7 @@ import os.path
 type_of_path = "Skills2Push"
 
 in_file = open("jerryio/" + type_of_path + ".txt", 'r')
-out_file = open("prosPaths/" + type_of_path + "CloseSide.txt", "w")
+out_file = open("prosPaths/" + type_of_path + ".txt", "w")
 
 startX = 0
 startY = 0
