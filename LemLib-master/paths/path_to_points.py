@@ -1,8 +1,10 @@
 import math
 import os.path
 
-in_file = open("", 'r')
-out_file = open(out_file_address, "w")
+type_of_path = "Skills2Push"
+
+in_file = open("jerryio/" + type_of_path + ".txt", 'r')
+out_file = open("prosPaths/" + type_of_path + "CloseSide.txt", "w")
 
 startX = 0
 startY = 0
@@ -41,6 +43,6 @@ for line in in_file.readlines():
             positions.append(pos)
         
 for i in positions:
-    print("moveBot(" + str(round(i[0], 3)) + ", " + str(round(i[1], 3)) + ", " + str(round(i[2], 3)) + ", " + str(round(i[3], 3)), i[4] + ");")
+    out_file.write("moveBot(" + str(round(i[0], 3)) + ", " + str(round(i[1], 3)) + ", " + str(round(i[2], 3)) + ", " + str(round(i[3], 3)) + ", " + i[4] + ");\n")
 
 # "x, y, theta, backwards"

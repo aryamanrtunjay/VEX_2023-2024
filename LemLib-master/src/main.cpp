@@ -162,22 +162,7 @@ void autonomous() {
     pros::ADIDigitalOut wings (WINGS_PORT);
     pros::ADIDigitalOut intake (INTAKE_PORT);
     
-    // -------------- Close Side Quals --------------
-    cT = -45;
-    moveBot(-23, 31, 45, 1000, false);
-    moveBot(0, -13, 0, 400, true);
-    moveBot(0, 0, -45, 500, false);
-    moveBot(22, -18, 0, 1000, true);
-    wings.set_value(true);
-    moveBot(0, 0, -45, 500, true);
-    moveBot(32, 0, 0, 1000, true);
-    moveBot(0, 0, 0, 0, false);
-
-    // -------------- Close Side Elims -------------- 
-    cT = 38;
-    moveBot(21, 45, 0, 1000, false);
-    wings.set_value(false);
-    moveBot(20, 6, 52, 700, false);
+    
 
 }
 
