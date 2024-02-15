@@ -2,7 +2,7 @@
 #include "lemlib/api.hpp"
 #define WINGS_PORT 'A'
 #define INTAKE_PORT 'H'
-#define HANG_PORT 'B'
+#define HANG_PORT 'C'
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
@@ -171,8 +171,12 @@ void moveBot(double x, double y, int timeout, bool fwd = true) {
  *
  * This is an example autonomous routine which demonstrates a lot of the features LemLib has to offer
  */
-void closeSideElims(pros::ADIDigitalOut wings, pros::ADIDigitalOut intake) {
+void CloseSideElims() {
+    pros::ADIDigitalOut wings (WINGS_PORT);
+    pros::ADIDigitalOut intake (INTAKE_PORT);
+    wings.set_value(true);
     moveBot(0, 0, 26, 500, false);
+    wings.set_value(false);
     moveBot(21.667, 43.641, 0.0, 1500, false);
     moveBot(19.524, 4.898, 64, 1500, false);
     moveBot(-20.872, -29.939, -90, 2000, true);
@@ -217,15 +221,33 @@ void FarSideQuals(pros::ADIDigitalOut wings, pros::ADIDigitalOut intake) {
 void autonomous() {
     pros::ADIDigitalOut wings (WINGS_PORT);
     pros::ADIDigitalOut intake (INTAKE_PORT);
+    wings.set_value(true);
+    moveBot(0, 0, 26, 500, false);
+    // wings.set_value(false);
+    moveBot(21.667, 43.641, 0.0, 1500, false);
+    moveBot(19.524, 4.898, 64, 1500, false);
+    moveBot(-20.872, -25.939, -90, 2000, true);
+    // wings.set_value(false);
+    moveBot(-32.135, -4.414, 90, 1500, true);
+    moveBot(0, 0, 90, 500, false);
+    moveBot(0, 12.5, 0, 750, true);
+    moveBot(0, -7, 0, 1000, false);
     
-    // closeSideElims(wings, intake);
-    FarSideQuals(wings, intake);
+    // moveBot(0, 0, -45, 500, false);
+    // moveBot(18, -18, 0.0, 1000, true);
+    // moveBot(0, 0, 45, 500, false);
+    // moveBot(0, -15, 0.0, 1000, true);
+    // moveBot(0, 5, 0.0, 500, false);
+    // moveBot(0, 0, -90, 500, false);
+    // moveBot(-30, 0, 0.0, 1000, false);
+    // moveBot(-12, -24, 0.0, 2000, false);
 }
 
 
 void opcontrol() {
     bool wingState = false;
     bool allowWings = false;
+    bool allowHang = false;
     pros::ADIDigitalOut hang (HANG_PORT);
     pros::ADIDigitalOut intake (INTAKE_PORT);
     pros::ADIDigitalOut wings (WINGS_PORT);
@@ -234,13 +256,20 @@ void opcontrol() {
         double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
         int w = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
         int h = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
+        int y = controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y);
+        int r = controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT);
         // double left = pow(1.03888, abs(leftJoy)) * abs(leftJoy) / leftJoy;
         // double right = pow(1.0388, abs(rightJoy)) * abs(rightJoy) / rightJoy;
         double left = pow(leftJoy / 127, 3) * 127;
         double right = pow(rightJoy / 127, 3) * 127;
         leftMotors.move(left);
         rightMotors.move(right);
-
+        if(allowHang && r == 1 && y == 1) {
+            allowHang = false;
+            hang.set_value(true);
+        } else if(r == 0 || y == 0) {
+            allowHang = true;
+        }
         if(allowWings && w == 1) {
             allowWings = false;
             wings.set_value(!wingState);
@@ -252,10 +281,8 @@ void opcontrol() {
 
         if(h == 1) {
             intake.set_value(true);
-            hang.set_value(false);
         } else {
             intake.set_value(false);
-            hang.set_value(true);
         }
 
         pros::delay(2);
