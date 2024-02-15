@@ -11,19 +11,22 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 pros::Motor lF(1, pros::E_MOTOR_GEARSET_06);
 pros::Motor lM(2, pros::E_MOTOR_GEARSET_06); // left middle motor. port 11, reversed
 pros::Motor lB(-3, pros::E_MOTOR_GEARSET_06);
-pros::Motor lT(4, pros::E_MOTOR_GEARSET_06);
+// pros::Motor lT(4, pros::E_MOTOR_GEARSET_06);
 pros::Motor rF(-10, pros::E_MOTOR_GEARSET_06); // right front motor. port 2
 pros::Motor rM(-9, pros::E_MOTOR_GEARSET_06); // right middle motor. port 11
 pros::Motor rB(8, pros::E_MOTOR_GEARSET_06); // right back motor. port 13
-pros::Motor rT(-7, pros::E_MOTOR_GEARSET_06);// left back motor. port 1, reversed
+// pros::Motor rT(-7, pros::E_MOTOR_GEARSET_06);// left back motor. port 1, reversed
 pros::Motor cataLeft(-20, pros::E_MOTOR_GEARSET_36);
 pros::Motor cataRight(11, pros::E_MOTOR_GEARSET_36);
 
 
 // motor groups
 
-pros::MotorGroup leftMotors({lF, lT, lM, lB}); // left motor group
-pros::MotorGroup rightMotors({rF, rT, rM, rB}); // right motor group
+// pros::MotorGroup leftMotors({lF, lT, lM, lB}); // left motor group
+// pros::MotorGroup rightMotors({rF, rT, rM, rB}); // right motor group
+
+pros::MotorGroup leftMotors({lF, lM, lB}); // left motor group
+pros::MotorGroup rightMotors({rF, rM, rB}); // right motor group
 
 /*
 // motor groups
@@ -144,7 +147,7 @@ void moveBot(double x, double y, double theta, int timeout, bool bwd = false) {
 }
 
 void moveBot(double x, double y, int timeout, bool fwd = true) {
-    chassis.moveToPoint(cX + x, cY + y, timeout, !fwd, 21);
+    chassis.moveToPoint(cX + x, cY + y, timeout, !fwd, 30);
     cX += x;
     cY += y;
 
@@ -174,13 +177,13 @@ void moveBot(double x, double y, int timeout, bool fwd = true) {
 void CloseSideElims() {
     pros::ADIDigitalOut wings (WINGS_PORT);
     pros::ADIDigitalOut intake (INTAKE_PORT);
-    wings.set_value(true);
     moveBot(0, 0, 26, 500, false);
-    wings.set_value(false);
     moveBot(21.667, 43.641, 0.0, 1500, false);
     moveBot(19.524, 4.898, 64, 1500, false);
+    wings.set_value(true);
     moveBot(-20.872, -29.939, -90, 2000, true);
     moveBot(-32.135, -4.414, 90, 1500, true);
+    wings.set_value(false);
     moveBot(0, 0, 90, 500, false);
     moveBot(0, 12.5, 0, 750, true);
     moveBot(0, -7, 0, 1000, false);
@@ -199,48 +202,85 @@ void closeSideQuals(pros::ADIDigitalOut wings, pros::ADIDigitalOut intake) {
     moveBot(0, 0, 80, 500, false);
 }
 
-void FarSideQuals(pros::ADIDigitalOut wings, pros::ADIDigitalOut intake) {
-    moveBot(0, 2.5, 0, 600, false);
-    moveBot(0, -29, 3000, true);
-    moveBot(26, -27, -45, 1500, true);
-    moveBot(0, 0, -45, 1400, false);
-    moveBot(-10, 0, 0, 1400, false);
-    moveBot(30, 0, 0, 1400, true);
-    moveBot(-25, 0, 0, 1400, false);
-    moveBot(0, 0, 180, 1500, false);
-    moveBot(-5, 0, 0, 1500, true);
-    moveBot(20, 0, 0, 1500, false);
-    moveBot(-25, 0, 0, 1500, true);
-    moveBot(0, 0, -78, 1500, false);
-    moveBot(18, 53, 0, 1500, false);
-    // moveBot(0, 0, -60, 1000, false);
+void FarSideQuals() {
+    pros::ADIDigitalOut wings (WINGS_PORT);
+    pros::ADIDigitalOut intake (INTAKE_PORT);
+    
+    moveBot(24, 24, 45, 1000, false);
+    moveBot(0, 0, -45, 1000, false);
+    moveBot(0, 15, 0, 700, false);
+    intake.set_value(true);
+    moveBot(0, -20, 0, 800, true);
+    moveBot(0, 0, -135, 700, false);
+    moveBot(-24, -18.5, 45, 1000, false);
+    moveBot(-23, 0, 0, 1400, false);
+    moveBot(-5.5, 0, 0, 500, false);
+    pros::Task::delay(200);
+    intake.set_value(false);
+    pros::Task::delay(400);
+    moveBot(37, 0, 0, 1000, true);
+    moveBot(0, 0, 60, 700, false);
+    moveBot(-12, 24, 0, 1000, false);
+    moveBot(-12, 24, 0, 1000, false);
+    moveBot(0, 0, 130, 900, false);
+    moveBot(35, 0, 0, 700, false);
+    intake.set_value(true);
+    moveBot(-10, 0, 0, 1000, true);
+    intake.set_value(false);
+    moveBot(0, 0, 147.5, 1000, false);
+    moveBot(-42, -14, 0, 900, false);
+    moveBot(18, 6, 0, 1000, true);
+    moveBot(0, 0, -170, 1000, false);
+    moveBot(30, 10, 0, 1000, false);
+    moveBot(-32, -11, 0, 1000, true);
+    moveBot(0, 0, -70, 1000, true);
+    wings.set_value(true);
+    moveBot(0, -24, 0, 800, true);
+    moveBot(0, 0, -88, 1000, true);
+}
 
+void FarSideElims() {
+    pros::ADIDigitalOut wings (WINGS_PORT);
+    pros::ADIDigitalOut intake (INTAKE_PORT);
 
+    wings.set_value(true);
+    intake.set_value(true);
+    moveBot(0, 0, -55, 400, false);
+    moveBot(-70, 72, 0, 1300, false);
+    wings.set_value(false);
+    pros::Task::delay(1100);
+    moveBot(0, -10, -45, 1000, false);
+    intake.set_value(false);
+    moveBot(30, -45, 45, 1000, true);
+    moveBot(0, 0, 70, 1000, false);
+    moveBot(30, 10, 0, 1000, false);
 }
 
 void autonomous() {
-    pros::ADIDigitalOut wings (WINGS_PORT);
-    pros::ADIDigitalOut intake (INTAKE_PORT);
-    wings.set_value(true);
-    moveBot(0, 0, 26, 500, false);
-    // wings.set_value(false);
-    moveBot(21.667, 43.641, 0.0, 1500, false);
-    moveBot(19.524, 4.898, 64, 1500, false);
-    moveBot(-20.872, -25.939, -90, 2000, true);
-    // wings.set_value(false);
-    moveBot(-32.135, -4.414, 90, 1500, true);
-    moveBot(0, 0, 90, 500, false);
-    moveBot(0, 12.5, 0, 750, true);
-    moveBot(0, -7, 0, 1000, false);
+    // pros::ADIDigitalOut wings (WINGS_PORT);
+    // pros::ADIDigitalOut intake (INTAKE_PORT);
+    // wings.set_value(true);
+    // moveBot(0, 0, 26, 500, false);
+    // // wings.set_value(false);
+    // moveBot(21.667, 43.641, 0.0, 1500, false);
+    // moveBot(19.524, 4.898, 64, 1500, false);
+    // moveBot(-20.872, -25.939, -90, 2000, true);
+    // // wings.set_value(false);
+    // moveBot(-32.135, -4.414, 90, 1500, true);
+    // moveBot(0, 0, 90, 500, false);
+    // moveBot(0, 12.5, 0, 750, true);
+    // moveBot(0, -7, 0, 1000, false);
     
-    // moveBot(0, 0, -45, 500, false);
-    // moveBot(18, -18, 0.0, 1000, true);
-    // moveBot(0, 0, 45, 500, false);
-    // moveBot(0, -15, 0.0, 1000, true);
-    // moveBot(0, 5, 0.0, 500, false);
-    // moveBot(0, 0, -90, 500, false);
-    // moveBot(-30, 0, 0.0, 1000, false);
-    // moveBot(-12, -24, 0.0, 2000, false);
+    // // moveBot(0, 0, -45, 500, false);
+    // // moveBot(18, -18, 0.0, 1000, true);
+    // // moveBot(0, 0, 45, 500, false);
+    // // moveBot(0, -15, 0.0, 1000, true);
+    // // moveBot(0, 5, 0.0, 500, false);
+    // // moveBot(0, 0, -90, 500, false);
+    // // moveBot(-30, 0, 0.0, 1000, false);
+    // // moveBot(-12, -24, 0.0, 2000, false);
+
+    FarSideElims();
 }
 
 
@@ -256,6 +296,7 @@ void opcontrol() {
         double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
         int w = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
         int h = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
+        int c = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
         int y = controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y);
         int r = controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT);
         // double left = pow(1.03888, abs(leftJoy)) * abs(leftJoy) / leftJoy;
@@ -284,6 +325,11 @@ void opcontrol() {
         } else {
             intake.set_value(false);
         }
+
+        // if(c == 1) {
+        //     rT.move(127);
+        //     lT.move(127);
+        // }
 
         pros::delay(2);
     };
