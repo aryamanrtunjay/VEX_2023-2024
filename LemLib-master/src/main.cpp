@@ -187,7 +187,10 @@ void CloseSideElims() {
     
 }
 
-void closeSideQuals(pros::ADIDigitalOut wings, pros::ADIDigitalOut intake) {
+void closeSideQuals() {
+    pros::ADIDigitalOut wings (WINGS_PORT);
+    pros::ADIDigitalOut intake (INTAKE_PORT);
+
     moveBot(0, 0, -45, 500, true);
     moveBot(18, -18, 0.0, 1000, true);
     moveBot(0, 0, 45, 500, true);
@@ -195,6 +198,7 @@ void closeSideQuals(pros::ADIDigitalOut wings, pros::ADIDigitalOut intake) {
     moveBot(0, 8, 0, 1000, false);
     moveBot(0, 0, 180, 1000, false);
     moveBot(-24, 25, -90, 4000, true);
+    wings.set_value(true);
     moveBot(-21, 0, 0, 2000, true);
     moveBot(0, 0, 80, 500, false);
 }
@@ -219,19 +223,21 @@ void FarSideQuals(pros::ADIDigitalOut wings, pros::ADIDigitalOut intake) {
 }
 
 void autonomous() {
-    pros::ADIDigitalOut wings (WINGS_PORT);
-    pros::ADIDigitalOut intake (INTAKE_PORT);
-    wings.set_value(true);
-    moveBot(0, 0, 26, 500, false);
+    CloseSideElims();
+
+    // pros::ADIDigitalOut wings (WINGS_PORT);
+    // pros::ADIDigitalOut intake (INTAKE_PORT);
+    // wings.set_value(true);
+    // moveBot(0, 0, 26, 500, false);
+    // // wings.set_value(false);
+    // moveBot(21.667, 43.641, 0.0, 1500, false);
+    // moveBot(19.524, 4.898, 64, 1500, false);
+    // moveBot(-20.872, -25.939, -90, 2000, true);
     // wings.set_value(false);
-    moveBot(21.667, 43.641, 0.0, 1500, false);
-    moveBot(19.524, 4.898, 64, 1500, false);
-    moveBot(-20.872, -25.939, -90, 2000, true);
-    // wings.set_value(false);
-    moveBot(-32.135, -4.414, 90, 1500, true);
-    moveBot(0, 0, 90, 500, false);
-    moveBot(0, 12.5, 0, 750, true);
-    moveBot(0, -7, 0, 1000, false);
+    // moveBot(-32.135, -4.414, 90, 1500, true);
+    // moveBot(0, 0, 90, 500, false);
+    // moveBot(0, 12.5, 0, 750, true);
+    // moveBot(0, -7, 0, 1000, false);
     
     // moveBot(0, 0, -45, 500, false);
     // moveBot(18, -18, 0.0, 1000, true);

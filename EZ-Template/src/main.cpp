@@ -4,6 +4,8 @@
 #define WINGS_PORT 'A'
 #define INTAKE_PORT 'H'
 #define HANG_PORT 'C'
+#define OPTICAL_PORT 5
+#define ROTATION_PORT 20
 
 /////
 // For installation, upgrading, documentations and tutorials, check out our website!
@@ -122,7 +124,6 @@ void autonomous() {
 }
 
 
-
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -141,25 +142,68 @@ void opcontrol() {
   bool allowWings = false;
   bool wingState = false;
   bool allowHang = false;
+  bool cataCocked = false;
+  bool first = true;
+  int targetCata = 55;
+
+  double rot = 0;
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
   pros::Controller master (pros::E_CONTROLLER_MASTER);
   pros::ADIDigitalOut hang (HANG_PORT);
   pros::ADIDigitalOut intake (INTAKE_PORT);
   pros::ADIDigitalOut wings (WINGS_PORT);
+  pros::Distance dist(OPTICAL_PORT);
+  pros::Rotation rotation_sensor(ROTATION_PORT);
+  rotation_sensor.reset();
   while (true) {
     int cata = master.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
     int R1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
     int L1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
     int RIGHT = master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT);
-    int Y == master.get_digital(pros::E_CONTROLLER_DIGITAL_Y);
-
+    int Y = master.get_digital(pros::E_CONTROLLER_DIGITAL_Y);
+    cata = 1;
     chassis.opcontrol_tank(); // Tank control
-    if(cata == 1) {
-      left_cata.move(127);
-      right_cata.move(127);
-    } else {
-      left_cata.move(0);
+
+    right_cata.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    left_cata.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+    // if(dist.get() <= 35) {
+    //   targetCata = 100;
+    // } else {
+    //   targetCata = 50;
+    // }
+    // pros::lcd::print(0, "Rotation: %d\n", 120 - abs(rotation_sensor.get_angle()/100));
+    // if(abs(120 - abs(rotation_sensor.get_angle()/100)) < targetCata) {
+    //   right_cata.move(127);
+    //   left_cata.move(127);
+    // }
+    // else {
+    //   right_cata.brake();
+    //   left_cata.brake();
+    // }
+
+    if(dist.get() <= 40) {
+      targetCata = 100;
+    }
+    else if(dist.get() <= 1000) {
+      targetCata = 50;
+    }
+    else {
+      targetCata = 0;
+    }
+
+    if(targetCata == 0) {
       right_cata.move(0);
+      left_cata.move(0);
+    }
+
+    if(abs(120 - abs(rotation_sensor.get_angle()/100)) < targetCata) {
+      right_cata.move(127);
+      left_cata.move(127);
+    }
+    else {
+      right_cata.brake();
+      left_cata.brake();
     }
 
     if(allowHang && RIGHT == 1 && Y == 1) {
