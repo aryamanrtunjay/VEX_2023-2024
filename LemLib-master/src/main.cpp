@@ -261,7 +261,7 @@ void opcontrol() {
     while(true) {
         double leftJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-        int w = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+        int R1 = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
         int h = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
         int y = controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y);
         int r = controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT);
@@ -277,13 +277,12 @@ void opcontrol() {
         } else if(r == 0 || y == 0) {
             allowHang = true;
         }
-        if(allowWings && w == 1) {
-            allowWings = false;
-            wings.set_value(!wingState);
-            wingState = !wingState;
-        } 
-        else if(w == 0) {
-            allowWings = true;
+        if(allowWings && R1 == 1) {
+          allowWings = false;
+          wings.set_value(!wingState);
+          wingState = !wingState;
+        } else if(R1 == 0) {
+          allowWings = true;
         }
 
         if(h == 1) {
