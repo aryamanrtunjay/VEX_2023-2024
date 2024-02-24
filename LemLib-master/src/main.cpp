@@ -1,8 +1,8 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 #define WINGS_PORT 'A'
-#define INTAKE_PORT 'H'
-#define HANG_PORT 'C'
+#define INTAKE_PORT 'C'
+#define HANG_PORT 'H'
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
