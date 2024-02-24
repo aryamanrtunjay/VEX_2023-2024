@@ -155,6 +155,8 @@ void opcontrol() {
   pros::Distance dist(OPTICAL_PORT);
   pros::Rotation rotation_sensor(ROTATION_PORT);
   rotation_sensor.reset();
+  intake.set_value(false);
+
   while (true) {
     int cata = master.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
     int R1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
