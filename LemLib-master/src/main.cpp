@@ -257,6 +257,7 @@ void opcontrol() {
     pros::ADIDigitalOut hang (HANG_PORT);
     pros::ADIDigitalOut intake (INTAKE_PORT);
     pros::ADIDigitalOut wings (WINGS_PORT);
+    instake.set_value(true);
     while(true) {
         double leftJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
