@@ -174,13 +174,12 @@ void moveBot(double x, double y, int timeout, bool fwd = true) {
 void CloseSideElims() {
     pros::ADIDigitalOut wings (WINGS_PORT);
     pros::ADIDigitalOut intake (INTAKE_PORT);
-    moveBot(0, 0, 26, 500, false);
-    moveBot(21.667, 43.641, 0.0, 1500, false);
-    pros::Task::delay(800);
     wings.set_value(true);
+    moveBot(0, 0, 26, 500, false);
+    wings.set_value(false);
+    moveBot(21.667, 43.641, 0.0, 1500, false);
     moveBot(19.524, 4.898, 64, 1500, false);
     moveBot(-20.872, -29.939, -90, 2000, true);
-    wings.set_value(false);
     moveBot(-32.135, -4.414, 90, 1500, true);
     moveBot(0, 0, 90, 500, false);
     moveBot(0, 12.5, 0, 750, true);
@@ -192,26 +191,16 @@ void closeSideQuals() {
     pros::ADIDigitalOut wings (WINGS_PORT);
     pros::ADIDigitalOut intake (INTAKE_PORT);
 
+    moveBot(0, 0, -45, 500, true);
+    moveBot(18, -18, 0.0, 1000, true);
+    moveBot(0, 0, 45, 500, true);
+    moveBot(0, -5, 0, 1000, true);
+    moveBot(0, 8, 0, 1000, false);
+    moveBot(0, 0, 180, 1000, false);
+    moveBot(-24, 25, -90, 4000, true);
     wings.set_value(true);
-    moveBot(-12, -15, 45, 1500, true);
-    moveBot(0, 0, 45, 1500, true);
-    wings.set_value(false);
-    moveBot(-6, 0, 0, 1500, true);
-    moveBot(6, 0, 0, 1000, false);
-    moveBot(-9, 0, 0, 1000, true);
-    moveBot(6, 0, 0, 1000, false);
-    moveBot(0, 0, 90, 1000, false);
-    moveBot(0, 22, 0, 1500, true);
-    moveBot(0, 26, 0, 1000, true);
-    wings.set_value(true);
-    moveBot(0, 0, -80, 1000, true);
-    // wings.set_value(false);
-    // moveBot(3, 0, 0, 700, false);
-    // moveBot(, 0, 90, 700, true);
-    // moveBot(0, 34, 0, 2000, true);
-    // wings.set_value(true);
-    // moveBot(0, 16, 0, 1000, true);
-    // moveBot(0, 0, -70, 1000, true);
+    moveBot(-21, 0, 0, 2000, true);
+    moveBot(0, 0, 80, 500, false);
 }
 
 void FarSideQuals(pros::ADIDigitalOut wings, pros::ADIDigitalOut intake) {
@@ -234,7 +223,8 @@ void FarSideQuals(pros::ADIDigitalOut wings, pros::ADIDigitalOut intake) {
 }
 
 void autonomous() {
-    CloseSideElims(); 
+    CloseSideElims();
+
     // pros::ADIDigitalOut wings (WINGS_PORT);
     // pros::ADIDigitalOut intake (INTAKE_PORT);
     // wings.set_value(true);
@@ -267,7 +257,7 @@ void opcontrol() {
     pros::ADIDigitalOut hang (HANG_PORT);
     pros::ADIDigitalOut intake (INTAKE_PORT);
     pros::ADIDigitalOut wings (WINGS_PORT);
-    intake.set_value(true);
+    instake.set_value(true);
     while(true) {
         double leftJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
@@ -297,115 +287,11 @@ void opcontrol() {
         }
 
         if(h == 1) {
-            intake.set_value(false);
-        } else {
             intake.set_value(true);
+        } else {
+            intake.set_value(false);
         }
 
         pros::delay(2);
     };
 }
-
-/**
- * Runs in driver control
- * */
-// Tank Code
-// void opcontrol() {
-//     bool allowWings = true;
-//     bool activateWings = false;
-//     pros::ADIDigitalOut wings (DIGITAL_SENSOR_PORT);
-//     while(true) {
-//         double leftJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-//         double rightJoy = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-//         double left = pow(1.03888, abs(leftJoy));
-//         double right = pow(1.03888, abs(rightJoy));
-
-//         bool L1 = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
-//         bool R1 = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
-
-//         rightMotors.move(right * rightJoy / abs(rightJoy));
-//         leftMotors.move(left * leftJoy / abs(leftJoy));
-
-//         if(L1 && allowWings) {
-//             allowWings = false;
-//             wings.set_value(!activateWings);
-//             activateWings = !activateWings;
-//             cataLeft.move(127);
-//             cataRight.move(127);
-//         }
-//         else if(!L1) {
-//             allowWings = true;
-//         }
-
-//         if(R1) {
-//             cataLeft.move(127);
-//             cataRight.move(127);
-//         }
-
-//         pros::delay(2);
-//     }
-// }
-
-// Arcade
-// void opcontrol() {
-//     while(true) {
-//         double vert = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-//         double hor = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-//         double turn = pow(hor / 127, 2) *127 * abs(hor) / hor;
-//         leftMotors.move(vert + hor);
-//         rightMotors.move(vert - hor);
-//         pros::delay(2);
-//     }
-// }
-
-// Other Arcade
-// void opcontrol() {
-//     while(true) {
-//         double vert = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-//         double hor = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-
-//     }
-// }
-// Field Oriented
-// void opcontrol() {
-//     pros::ADIDigitalOut wings (DIGITAL_SENSOR_PORT);
-//     while (true) {
-//         double vertical = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-//         double horizontal = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-//         bool backwards = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
-//         bool A = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
-//         bool R1 = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
-//         bool activateWings = true;
-//         bool allowWings = true;
-//         double target_heading = atan2(vertical, horizontal);
-//         if(backwards) {
-//             target_heading += PI;
-//         }
-//         double magnitude = sqrt(vertical * vertical + horizontal * horizontal);
-//         lemlib::Pose pose = chassis.getPose(true);
-//         double currentHeading = pose.theta;
-//         double deltaHeading = target_heading - currentHeading;
-//         do {
-//             if(abs(deltaHeading) > PI) {
-//                 deltaHeading += -2 * PI * abs(deltaHeading) / deltaHeading;
-//             } 
-//         } while(abs(deltaHeading) > PI);
-//         double leftMotorPower = backwards ? -127: 127;
-//         double rightMotorPower = backwards ? -127: 127;
-//         if(deltaHeading > 0) {
-//             rightMotorPower -= (backwards ? -1: 1) * deltaHeading * 508 / PI;
-//         } else if(deltaHeading < 0)  {
-//             leftMotorPower += (backwards ? -1: 1) * deltaHeading * 508 / PI;
-//         }
-//         if(abs(rightMotorPower) > 127) {
-//             rightMotorPower = 127 * abs(rightMotorPower) / rightMotorPower;
-//         }
-//         if(abs(leftMotorPower) > 127) {
-//             leftMotorPower = 127 * abs(leftMotorPower) / leftMotorPower;
-//         }
-//         leftMotors.move(leftMotorPower * magnitude / 127);
-//         rightMotors.move(rightMotorPower * magnitude / 127);
-
-//         pros::delay(2);
-//     }
-// }

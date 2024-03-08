@@ -25,7 +25,7 @@ ez::Drive chassis (
   ,{-9, 8, -7}
 
   // IMU Port
-  ,21
+  ,6
 
   // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
   ,2.75
@@ -155,23 +155,57 @@ void opcontrol() {
   pros::Distance dist(OPTICAL_PORT);
   pros::Rotation rotation_sensor(ROTATION_PORT);
   rotation_sensor.reset();
+  intake.set_value(false);
+
   while (true) {
     int cata = master.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
     int R1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
-    int R2 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
     int L1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
     int RIGHT = master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT);
     int Y = master.get_digital(pros::E_CONTROLLER_DIGITAL_Y);
     cata = 1;
     chassis.opcontrol_tank(); // Tank control
 
-    if(R2) {
-      left_cata.move(83);
-      right_cata.move(83);
-      pros::Task::delay(1);
-    } else {
-      left_cata.move(0);
+    right_cata.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    left_cata.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+    // if(dist.get() <= 35) {
+    //   targetCata = 100;
+    // } else {
+    //   targetCata = 50;
+    // }
+    // pros::lcd::print(0, "Rotation: %d\n", 120 - abs(rotation_sensor.get_angle()/100));
+    // if(abs(120 - abs(rotation_sensor.get_angle()/100)) < targetCata) {
+    //   right_cata.move(127);
+    //   left_cata.move(127);
+    // }
+    // else {
+    //   right_cata.brake();
+    //   left_cata.brake();
+    // }
+
+    if(dist.get() <= 40) {
+      targetCata = 100;
+    }
+    else if(dist.get() <= 1000) {
+      targetCata = 50;
+    }
+    else {
+      targetCata = 0;
+    }
+
+    if(targetCata == 0) {
       right_cata.move(0);
+      left_cata.move(0);
+    }
+
+    if(abs(120 - abs(rotation_sensor.get_angle()/100)) < targetCata) {
+      right_cata.move(127);
+      left_cata.move(127);
+    }
+    else {
+      right_cata.brake();
+      left_cata.brake();
     }
 
     if(allowHang && RIGHT == 1 && Y == 1) {
@@ -189,9 +223,9 @@ void opcontrol() {
       allowWings = true;
     }
     if(L1 == 1) {
-      intake.set_value(false);
-    } else {
       intake.set_value(true);
+    } else {
+      intake.set_value(false);
     }
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
