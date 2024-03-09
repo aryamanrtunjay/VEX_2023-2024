@@ -4,25 +4,21 @@
 #define WINGS_PORT 'A'
 #define INTAKE_PORT 'H'
 #define HANG_PORT 'C'
-#define OPTICAL_PORT 5
-#define ROTATION_PORT 20
 
 /////
 // For installation, upgrading, documentations and tutorials, check out our website!
 // https://ez-robotics.github.io/EZ-Template/
 /////
-pros::Motor left_cata(4, true);
-pros::Motor right_cata(10, false);
 
 // Chassis constructor
 ez::Drive chassis (
   // Left Chassis Ports (negative port will reverse it!)
   //   the first port is used as the sensor
-  {1, 2, -3}
+  {1, 2, -3, 4}
 
   // Right Chassis Ports (negative port will reverse it!)
   //   the first port is used as the sensor
-  ,{-9, 8, -7}
+  ,{-10, -9, 8, -7}
 
   // IMU Port
   ,21
@@ -142,37 +138,18 @@ void opcontrol() {
   bool allowWings = false;
   bool wingState = false;
   bool allowHang = false;
-  bool cataCocked = false;
-  bool first = true;
-  int targetCata = 55;
-
-  double rot = 0;
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
   pros::Controller master (pros::E_CONTROLLER_MASTER);
   pros::ADIDigitalOut hang (HANG_PORT);
   pros::ADIDigitalOut intake (INTAKE_PORT);
   pros::ADIDigitalOut wings (WINGS_PORT);
-  pros::Distance dist(OPTICAL_PORT);
-  pros::Rotation rotation_sensor(ROTATION_PORT);
-  rotation_sensor.reset();
   while (true) {
-    int cata = master.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
     int R1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
     int R2 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
     int L1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
     int RIGHT = master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT);
     int Y = master.get_digital(pros::E_CONTROLLER_DIGITAL_Y);
-    cata = 1;
     chassis.opcontrol_tank(); // Tank control
-
-    if(R2) {
-      left_cata.move(83);
-      right_cata.move(83);
-      pros::Task::delay(1);
-    } else {
-      left_cata.move(0);
-      right_cata.move(0);
-    }
 
     if(allowHang && RIGHT == 1 && Y == 1) {
       allowHang = false;

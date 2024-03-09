@@ -18,8 +18,8 @@ const int SWING_SPEED = 127;
 // Constants
 ///
 void default_constants() {
-  chassis.pid_heading_constants_set(0.8, 0.01, 0);
-  chassis.pid_drive_constants_set(700, 50, 0);
+  chassis.pid_heading_constants_set(3, 0, 20);
+  chassis.pid_drive_constants_set(10, 0, 100);
   chassis.pid_turn_constants_set(3, 0, 20);
   chassis.pid_swing_constants_set(5, 0, 30);
 
@@ -28,12 +28,10 @@ void default_constants() {
   chassis.pid_drive_exit_condition_set(300_ms, 1_in, 500_ms, 3_in, 750_ms, 750_ms);
 
   chassis.slew_drive_constants_set(7_in, 80);
+  
 }
 
 void AllAutons() {
-  pros::Motor left_cata(4, true);
-  pros::Motor right_cata(10, false);
-
   chassis.pid_heading_constants_set(3, 0, 20);
   chassis.pid_drive_constants_set(10, 0, 100);
   chassis.pid_turn_constants_set(3, 0, 20);
@@ -45,42 +43,69 @@ void AllAutons() {
 
   chassis.slew_drive_constants_set(7_in, 80);
 
-  // chassis.pid_drive_set(24_in, DRIVE_SPEED, true);
-  // chassis.pid_wait();
-  // chassis.pid_swing_set(ez::RIGHT_SWING, -90_deg, SWING_SPEED, 45);
-  // chassis.pid_wait();
-
   pros::ADIDigitalOut wings (WINGS_PORT);
   pros::ADIDigitalOut intake (INTAKE_PORT);
-
-  intake.set_value(true);
   chassis.drive_angle_set(-98_deg);
-  // Drive to descore
-  chassis.pid_drive_set(-32.4_in, DRIVE_SPEED, false);
+
+  chassis.pid_drive_set(2_in, DRIVE_SPEED, false);
   pros::Task::delay(500);
+  intake.set_value(true);
+  pros::Task::delay(500);
+  // Drive to descore
+  chassis.pid_drive_set(-36_in, DRIVE_SPEED, false);
+  pros::Task::delay(1500);
   wings.set_value(true);
   pros::Task::delay(300);
   chassis.pid_turn_set(-120_deg, TURN_SPEED, false);
+  pros::Task::delay(1000);
+  chassis.pid_drive_set(-23_in, DRIVE_SPEED, false);
   pros::Task::delay(800);
-  chassis.pid_drive_set(-22.5_in, DRIVE_SPEED, false);
-  pros::Task::delay(800);
-  chassis.pid_turn_set(-180_deg, TURN_SPEED, false);
+  chassis.pid_turn_set(-175_deg, TURN_SPEED, false);
   wings.set_value(false);
   pros::Task::delay(800);   
-  chassis.pid_drive_set(-15_in, DRIVE_SPEED, false);
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED, false);
   pros::Task::delay(800);
-  chassis.pid_drive_set(15_in, DRIVE_SPEED, false);
+  chassis.pid_turn_set(-180_deg, TURN_SPEED, false);
+  pros::Task::delay(200);
+  chassis.pid_drive_set(18_in, DRIVE_SPEED, false);
   pros::Task::delay(800);
   chassis.pid_turn_set(0_deg, TURN_SPEED, false);
+  pros::Task::delay(1200);
+  intake.set_value(false);
+  chassis.pid_drive_set(20_in, DRIVE_SPEED, false);
   pros::Task::delay(800);
-  chassis.pid_drive_set(15_in, DRIVE_SPEED, false);
+  chassis.pid_drive_set(-20_in, DRIVE_SPEED, false);
   pros::Task::delay(800);
-  chassis.pid_drive_set(-15_in, DRIVE_SPEED, false);
+  intake.set_value(true);
+  chassis.pid_turn_set(-65_deg, TURN_SPEED, false);
   pros::Task::delay(800);
-  chassis.pid_turn_set(-92_deg, TURN_SPEED, false);
-  pros::Task::delay(800);
-  chassis.pid_drive_set(50_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(54_in, DRIVE_SPEED, false);
   pros::Task::delay(2000);
-  
+  chassis.pid_drive_set(-6_in, DRIVE_SPEED, false);
+  pros::Task::delay(500);
+  chassis.pid_turn_set(0_deg, TURN_SPEED, false);
+  pros::Task::delay(500);
+  chassis.pid_drive_set(18_in, DRIVE_SPEED, false);
+  pros::Task::delay(1000);
+  chassis.pid_turn_set(90_deg, TURN_SPEED, false);
+  pros::Task::delay(800);
+  wings.set_value(true);
+  chassis.pid_drive_set(32_in, DRIVE_SPEED, false);
+  pros::Task::delay(1200);
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED, false);
+  wings.set_value(false);
+  pros::Task::delay(700);
+  chassis.pid_turn_set(-70_deg, TURN_SPEED, false);
+  pros::Task::delay(1000);
+  chassis.pid_drive_set(30_in, DRIVE_SPEED, false);
+  pros::Task::delay(1500);
+  chassis.pid_drive_set(-2_in, DRIVE_SPEED, false);
+  pros::Task::delay(500);
+  chassis.pid_turn_set(90_deg, TURN_SPEED, false);
+  pros::Task::delay(1000);
+  chassis.pid_drive_set(34_in, DRIVE_SPEED, false);
+  pros::Task::delay(1500);
+  chassis.pid_drive_set(-2_in, DRIVE_SPEED, false);
+  pros::Task::delay(500);
 
 }

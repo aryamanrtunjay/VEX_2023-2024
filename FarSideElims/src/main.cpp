@@ -11,21 +11,19 @@
 // For installation, upgrading, documentations and tutorials, check out our website!
 // https://ez-robotics.github.io/EZ-Template/
 /////
-pros::Motor left_cata(4, true);
-pros::Motor right_cata(10, false);
 
 // Chassis constructor
 ez::Drive chassis (
   // Left Chassis Ports (negative port will reverse it!)
   //   the first port is used as the sensor
-  {1, 2, -3}
+  {1, 2, -3, 4}
 
   // Right Chassis Ports (negative port will reverse it!)
   //   the first port is used as the sensor
-  ,{-9, 8, -7}
+  ,{-9, 8, -7, -10}
 
   // IMU Port
-  ,6
+  ,21
 
   // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
   ,2.75
@@ -142,9 +140,6 @@ void opcontrol() {
   bool allowWings = false;
   bool wingState = false;
   bool allowHang = false;
-  bool cataCocked = false;
-  bool first = true;
-  int targetCata = 55;
 
   double rot = 0;
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
@@ -152,62 +147,13 @@ void opcontrol() {
   pros::ADIDigitalOut hang (HANG_PORT);
   pros::ADIDigitalOut intake (INTAKE_PORT);
   pros::ADIDigitalOut wings (WINGS_PORT);
-  pros::Distance dist(OPTICAL_PORT);
-  pros::Rotation rotation_sensor(ROTATION_PORT);
-  rotation_sensor.reset();
-  intake.set_value(false);
-
   while (true) {
-    int cata = master.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
     int R1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+    int R2 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
     int L1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
     int RIGHT = master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT);
     int Y = master.get_digital(pros::E_CONTROLLER_DIGITAL_Y);
-    cata = 1;
     chassis.opcontrol_tank(); // Tank control
-
-    right_cata.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    left_cata.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-
-    // if(dist.get() <= 35) {
-    //   targetCata = 100;
-    // } else {
-    //   targetCata = 50;
-    // }
-    // pros::lcd::print(0, "Rotation: %d\n", 120 - abs(rotation_sensor.get_angle()/100));
-    // if(abs(120 - abs(rotation_sensor.get_angle()/100)) < targetCata) {
-    //   right_cata.move(127);
-    //   left_cata.move(127);
-    // }
-    // else {
-    //   right_cata.brake();
-    //   left_cata.brake();
-    // }
-
-    if(dist.get() <= 40) {
-      targetCata = 100;
-    }
-    else if(dist.get() <= 1000) {
-      targetCata = 50;
-    }
-    else {
-      targetCata = 0;
-    }
-
-    if(targetCata == 0) {
-      right_cata.move(0);
-      left_cata.move(0);
-    }
-
-    if(abs(120 - abs(rotation_sensor.get_angle()/100)) < targetCata) {
-      right_cata.move(127);
-      left_cata.move(127);
-    }
-    else {
-      right_cata.brake();
-      left_cata.brake();
-    }
-
     if(allowHang && RIGHT == 1 && Y == 1) {
       allowHang = false;
       hang.set_value(true);
@@ -223,9 +169,9 @@ void opcontrol() {
       allowWings = true;
     }
     if(L1 == 1) {
-      intake.set_value(true);
-    } else {
       intake.set_value(false);
+    } else {
+      intake.set_value(true);
     }
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
